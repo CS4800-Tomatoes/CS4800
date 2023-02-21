@@ -1,54 +1,41 @@
-import flask as Flask
+from flask import Flask
 from flask_cors import CORS
-import pymongo
-import json
 
-app = Flask.Flask(__name__)
-# CORS(app)
+app = Flask(__name__)
+CORS(app)
 
-classes_list = []
+class_list_db=[]
 
-my_client = pymongo.MongoClient("mongodb+srv://msarmiento1621:tXGN4XFKuOcyse19@cluster0.qnobfqx.mongodb.net/test")
-my_db = my_client["Class_Recommender"]
-my_collection = my_db["classes"]
+def search_by_budget_db(Course_Num):
+  res = []
+  for Course in class_list_db:    
+    if Course['Course ID'] == Course_Num:
+      res.append(Course)
+  return res
 
 def init_db():
     db_file = open("db.csv")
-    for line in db_file.readlines():
+    for line in db_file.readlines():  
         parts = line.split(",")
-        classes_list.append(
+        class_list_db.append(
             {
-            "Course Number" : int(parts[0]),
-            "Course Name" : parts[1],
+                "Course ID" : int(parts[0]),
+                "Course Name" : parts[1]
             }
-        )
-    print("Database initialized")
-    
-@app.route('/search/<course_number>')    
-def search_by_class_num(course_number):
-    course_num = int(course_number)
-    res = []
-    for course in classes_list:
-        if course["Course Number"] == course_num:
-            res.append(course)
-    return json.dumps(res)
+        )  
+    print(class_list_db)
 
-#@app.route('/')
-# def search_by_class_num_DB(course_number):
-#     res = []
-#     for course in my_collection.find():                                        #Timeout error here (?) idk what's going on
-#         if course['Course Number'] == int(course_number):
-#             course.pop('_id')
-#             res.append(course)
-#     return json.dumps(res)
+@app.route("/search/<budget>")
+def search_by_budget(budget):
+  budget = float(budget)
+  return search_by_budget_db(budget)
 
-@app.route('/cs4800')
 def hello_world():
-    return "Hello from CS4800"
+    return "Welcome to the Class Recommender"
 
 
+
+#print(hello_world())
 init_db()
+#print(search_by_budget_db(4800))
 app.run(host = "0.0.0.0")
-
-#print(classes_list)
-#print(search_by_class_num_DB(4200))
