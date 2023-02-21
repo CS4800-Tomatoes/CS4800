@@ -1,6 +1,6 @@
 import flask as Flask
-from flask_cors import CORS
-import pymongo
+#from flask_cors import CORS
+#import pymongo
 import json
 
 app = Flask.Flask(__name__)
@@ -8,21 +8,21 @@ app = Flask.Flask(__name__)
 
 classes_list = []
 
-my_client = pymongo.MongoClient("mongodb+srv://msarmiento1621:tXGN4XFKuOcyse19@cluster0.qnobfqx.mongodb.net/test")
-my_db = my_client["Class_Recommender"]
-my_collection = my_db["classes"]
+#my_client = pymongo.MongoClient("mongodb+srv://msarmiento1621:tXGN4XFKuOcyse19@cluster0.qnobfqx.mongodb.net/test")
+#my_db = my_client["Class_Recommender"]
+#my_collection = my_db["classes"]
 
-def init_db():
-    db_file = open("db.csv")
-    for line in db_file.readlines():
-        parts = line.split(",")
-        classes_list.append(
-            {
-            "Course Number" : int(parts[0]),
-            "Course Name" : parts[1],
-            }
-        )
-    print("Database initialized")
+# def init_db():
+#     db_file = open("db.csv")
+#     for line in db_file.readlines():
+#         parts = line.split(",")
+#         classes_list.append(
+#             {
+#             "Course Number" : int(parts[0]),
+#             "Course Name" : parts[1],
+#             }
+#         )
+#     print("Database initialized")
     
 @app.route('/search/<course_number>')    
 def search_by_class_num(course_number):
@@ -42,12 +42,20 @@ def search_by_class_num(course_number):
 #             res.append(course)
 #     return json.dumps(res)
 
+@app.route('/')
+def home_page():
+    return "Temp Home Page"
+
 @app.route('/cs4800')
 def hello_world():
     return "Hello from CS4800"
 
+@app.route('/cs4800/conanapi')
+def conan_api():
+    return "Proof I (Conan Jian) can make an api"
 
-init_db()
+#I turned off db since I don't have it
+#init_db()
 app.run(host = "0.0.0.0")
 
 #print(classes_list)
