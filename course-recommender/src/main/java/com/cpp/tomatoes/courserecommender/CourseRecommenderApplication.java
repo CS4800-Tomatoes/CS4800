@@ -1,4 +1,4 @@
-package com.tomatoes.courserecommender;
+package com.cpp.tomatoes.courserecommender;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,7 +8,7 @@ public class CourseRecommenderApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CourseRecommenderApplication.class, args);
-		System.out.println("Hello World :)");
+		System.out.println("Hello World");
 	}
 
 }

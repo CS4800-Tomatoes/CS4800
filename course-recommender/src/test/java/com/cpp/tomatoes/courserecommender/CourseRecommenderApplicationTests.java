@@ -1,4 +1,4 @@
-package com.tomatoes.courserecommender;
+package com.cpp.tomatoes.courserecommender;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
