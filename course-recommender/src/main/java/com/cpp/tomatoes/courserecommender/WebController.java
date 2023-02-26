@@ -44,10 +44,6 @@ public class WebController {
                 innerObject.addProperty("link", link.attr("href"));
                 innerObject.addProperty("text", link.text());
                 jsonArray.add(innerObject);
-                // // get the value from href attribute
-                // System.out.println("\nlink : " + link.attr("href"));
-                // System.out.println("text : " + link.text());
-
             }
             jsonObject.add("ArrayOfLinks", jsonArray);
 
@@ -55,5 +51,12 @@ public class WebController {
             e.printStackTrace();
         }
         return jsonObject.toString();
+    }
+
+    @GetMapping(path = "/mongoSearch")
+    public String mongoSearch()
+    {
+        MongoRepo repo = new MongoRepo();
+        return repo.test();
     }
 }
