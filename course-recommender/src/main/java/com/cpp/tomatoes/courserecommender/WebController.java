@@ -30,8 +30,6 @@ public class WebController {
 
             // need http protocol
             doc = Jsoup.connect("http://google.com").get();
-            
-            
 
             // get page title
             String title = doc.title();
