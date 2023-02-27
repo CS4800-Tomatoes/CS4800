@@ -1,53 +1,31 @@
 package com.cpp.tomatoes.courserecommender;
 
-import javax.swing.text.Document;
+import static com.mongodb.client.model.Filters.eq;
 
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.ServerApi;
-import com.mongodb.ServerApiVersion;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.bson.json.JsonObject;
+
+import com.google.gson.JsonArray;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 
 public class MongoRepo {
-    private MongoClient _client;
-    private MongoDatabase _database;
+    MongoCollection<Document> _collection;
 
-    public MongoRepo()
+    public MongoRepo(String collection)
     {
-        if(_client == null)
-        {
-            String url = "mongodb+srv://msarmiento1621:tXGN4XFKuOcyse19@cluster0.qnobfqx.mongodb.net/?retryWrites=true&w=majority";
-            ConnectionString connectionString = new ConnectionString(url);
-            MongoClientSettings settings = MongoClientSettings.builder()
-            .applyConnectionString(connectionString)
-            .serverApi(ServerApi.builder()
-                .version(ServerApiVersion.V1)
-                .build())
-            .build();
-            
-            _client = MongoClients.create(settings);
-            _database = _client.getDatabase("Class_Recommender");
-        }
+        var connection = new MongoConnection();
+        _collection = connection.getCollection("Class_Recommender", collection);
     }
 
-    public String test()
+    public String findCourseNum(int courseNum)
     {
-        String temp = "";
-        for (String name : _database.listCollectionNames()) {
-            temp += name + " ";
-        }
-        return temp;
-    }
-
-    public void close()
-    {
-        if(_client != null)
-        {
-            _client.close();
-            _client = null;
-        }
+        Bson eqComparision = eq("Course Number", courseNum);
+        var document = _collection.find(eqComparision);
+        JsonArray result = new JsonArray();
+        document.forEach(doc -> {
+            result.add(doc.toJson());
+        });
+        return result.toString();
     }
 }

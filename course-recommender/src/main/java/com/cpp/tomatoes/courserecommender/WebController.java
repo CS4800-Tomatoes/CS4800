@@ -7,6 +7,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.JsonArray;
@@ -53,10 +54,21 @@ public class WebController {
         return jsonObject.toString();
     }
 
+    // @GetMapping(path = "/mongoSearch")
+    // public String mongoSearch()
+    // {
+    //     MongoConnection repo = new MongoConnection();
+    //     return repo.test();
+    // }
+
     @GetMapping(path = "/mongoSearch")
-    public String mongoSearch()
+    public String mongoSearch(@RequestParam Integer courseNum)
     {
-        MongoRepo repo = new MongoRepo();
-        return repo.test();
+        if(courseNum == null)
+        {
+            return "Missing Params";
+        }
+        MongoRepo repo = new MongoRepo("classes");
+        return repo.findCourseNum(courseNum);
     }
 }
