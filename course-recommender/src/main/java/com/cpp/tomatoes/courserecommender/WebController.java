@@ -7,6 +7,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.JsonArray;
@@ -44,10 +45,6 @@ public class WebController {
                 innerObject.addProperty("link", link.attr("href"));
                 innerObject.addProperty("text", link.text());
                 jsonArray.add(innerObject);
-                // // get the value from href attribute
-                // System.out.println("\nlink : " + link.attr("href"));
-                // System.out.println("text : " + link.text());
-
             }
             jsonObject.add("ArrayOfLinks", jsonArray);
 
@@ -55,5 +52,23 @@ public class WebController {
             e.printStackTrace();
         }
         return jsonObject.toString();
+    }
+
+    // @GetMapping(path = "/mongoSearch")
+    // public String mongoSearch()
+    // {
+    //     MongoConnection repo = new MongoConnection();
+    //     return repo.test();
+    // }
+
+    @GetMapping(path = "/mongoSearch")
+    public String mongoSearch(@RequestParam Integer courseNum)
+    {
+        if(courseNum == null)
+        {
+            return "Missing Params";
+        }
+        MongoRepo repo = new MongoRepo("classes");
+        return repo.findCourseNum(courseNum);
     }
 }
