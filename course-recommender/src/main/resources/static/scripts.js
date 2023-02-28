@@ -12,10 +12,14 @@ $(document).ready(function()
         var course = $('#course_input').val()
         //send HTTP request
         $.ajax({
-                url: "/welcome",
+                url: "/mongoSearch",
+                type: "get",
+                data: {
+                    courseNum: courseNumber
+                },
                 success: function (res){
-                    console.log("The result from this server is: " + res);
-                    alert(courseNumber)
+                    alert("The result from this server is: " + res);
+                    // alert(courseNumber)
                 },
                 error: function(error){
                     alert("bruh")
