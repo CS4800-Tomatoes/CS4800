@@ -4,13 +4,12 @@ import static com.mongodb.client.model.Filters.eq;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bson.json.JsonObject;
 
 import com.google.gson.JsonArray;
 import com.mongodb.client.MongoCollection;
 
 public class MongoRepo {
-    MongoCollection<Document> _collection;
+    private MongoCollection<Document> _collection;
 
     public MongoRepo(String collection)
     {
@@ -28,4 +27,11 @@ public class MongoRepo {
         });
         return result.toString();
     }
+
+    public String findCourseNum(String[] tags)
+    {
+        //If recieve multiple tags return json that separates them both
+        return "";
+    }
+    
 }

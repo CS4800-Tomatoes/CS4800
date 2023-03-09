@@ -54,14 +54,8 @@ public class WebController {
         return jsonObject.toString();
     }
 
-    // @GetMapping(path = "/mongoSearch")
-    // public String mongoSearch()
-    // {
-    //     MongoConnection repo = new MongoConnection();
-    //     return repo.test();
-    // }
 
-    @GetMapping(path = "/mongoSearch")
+    @GetMapping(path = "/mongoSearchCourseNum")
     public String mongoSearch(@RequestParam Integer courseNum)
     {
         if(courseNum == null)
@@ -70,5 +64,22 @@ public class WebController {
         }
         MongoRepo repo = new MongoRepo("classes");
         return repo.findCourseNum(courseNum);
+    }
+
+    @GetMapping(path = "/mongoSearch")
+    public String mongoSearch(@RequestParam String searchString)
+    {
+        //Make this return a json
+
+        return "";
+    }
+
+    private String[] findTagsFromKeyWords(String searchString)
+    {
+        //turn string into arry
+        //check if any of these words are keywords
+        //use map to turn keywords to tags
+        //return arry of tags
+        return new String[1];
     }
 }

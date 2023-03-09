@@ -32,13 +32,9 @@ public class MongoConnection {
         }
     }
 
-    public String test()
+    public MongoDatabase getDatabase(String db)
     {
-        String temp = "";
-        for (String name : _client.getDatabase("Class_Recommender").listCollectionNames()) {
-            temp += name + " ";
-        }
-        return temp;
+        return _client.getDatabase(db);
     }
 
     public MongoCollection<Document> getCollection(String db, String collection)
