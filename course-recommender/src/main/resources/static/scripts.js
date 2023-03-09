@@ -5,7 +5,7 @@ $(document).ready(function()
     var search_bar = document.getElementById("search_bar");
     var search_button = document.getElementById("search_button");
 
-    // for seraching up them classes :(
+    // for seraching up them classes 
     function search(courseNumber){
         $("#result_list").empty();
         //get input
@@ -19,10 +19,13 @@ $(document).ready(function()
                 },
                 success: function (res){
                     alert("The result from this server is: " + res);
-                    // alert(courseNumber)
+                    //Step 1: create a list of the courses that match the tags of the searched words
+                    
+                    //Step 2: Populate into cards
+                    //Step 3: Add a cute tomato at the bottom of the card to show matches/top recommendations
                 },
                 error: function(error){
-                    alert("bruh")
+                    alert("There was an issue :(")
                     console.log("Failed miserably." + error);
                 }
             });
@@ -34,7 +37,7 @@ $(document).ready(function()
         var searchBar = document.getElementById("search_bar");
         console.dir(searchBar);
         if(searchBar.value == ""){
-            alert("bruh");
+            alert("Please enter in an interest.");
         }
         else{
             search(searchBar.value);
