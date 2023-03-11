@@ -1,6 +1,9 @@
 package com.cpp.tomatoes.courserecommender;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,6 +18,13 @@ import com.google.gson.JsonObject;
 
 @RestController
 public class WebController {
+
+    private Dictionary<String,String> _keywordToTagMap;
+    public WebController()
+    {
+        _keywordToTagMap = new Hashtable<String,String>();
+        _keywordToTagMap.put("test", "hello");
+    }
 
     @GetMapping(path = "/welcome")
     public String welcome()
@@ -63,15 +73,33 @@ public class WebController {
             return "Missing Params";
         }
         MongoRepo repo = new MongoRepo("classes");
-        return repo.findCourseNum(courseNum);
+        return repo.findCourses(courseNum);
     }
 
     @GetMapping(path = "/mongoSearch")
     public String mongoSearch(@RequestParam String searchString)
     {
         //Make this return a json
+        if(searchString == null)
+        {
+            return "Missing Params";
+        }
+        MongoRepo repo = new MongoRepo("classes");
+        
+        String[] tags = findTagsFromKeyWords(searchString);
+        if(tags.length == 0)
+        {
+            return "Nothing";
+        }
 
-        return "";
+
+        String result = "";
+        for(String tag : tags)
+        {
+            result += tag + " ";
+        }
+
+        return result;
     }
 
     private String[] findTagsFromKeyWords(String searchString)
@@ -80,6 +108,17 @@ public class WebController {
         //check if any of these words are keywords
         //use map to turn keywords to tags
         //return arry of tags
-        return new String[1];
+
+        String[] splitSearchString = searchString.split(" ");
+        ArrayList<String> list = new ArrayList<String>();
+        for(String s: splitSearchString)
+        {
+            String tag = _keywordToTagMap.get(s);
+            if(tag != null)
+            {
+                list.add(tag);
+            }
+        }
+        return list.toArray(new String[list.size()]);
     }
 }
