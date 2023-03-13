@@ -15,7 +15,12 @@
 </head>
 <body>
   <header>
-
+      <div class="navbar-Container">
+        <ul class="navbar">
+          <li class="navbar-Element"><a class="navbar-Link" href="#">Home</a></li>
+          <li class="navbar-Element"><a class="navbar-Link" href="#">About</a></li>
+        </ul>
+      </div>
   </header>
 
   <main>
@@ -27,8 +32,8 @@
 
         <!-- Searching part -->
         <p>
-          <input id="search_bar" type="text" placeholder="Enter in a class"/>
-          <a id="search_button" href="#" class="button">Search</a>
+          <input id="search_bar" class="search" type="text" placeholder="Enter in a class"/>
+          <button id="search_button" class="button">Search</button>
         </p>
       </div> 
       <!-- <div class="album py-5 bg-light">
@@ -58,13 +63,18 @@
 
   <footer>
     <!-- Feet -->
-    <div class="container">
-      <p class="floaty-thingy">
-        <a href="#">Back to top</a>
-      </p>
-      <p class="toe">CS Course Recommender is here to help find your community</p>
-      <p class="matoes">Website pertains to Cal Poly Pomona ~only~</p>
+    <div class="footer-Container">
+      <div class="footer-Left">
+          <p>Recommendations are for Cal Poly Pomona only</p>
+      </div>
+      <div class="footer-Middle">
+        <p>Find your communitiy of coders</p>
+      </div>
+      <div class="footer-Right">
+        <p><a href="#" class="toes">Back to top</a></p>
+      </div>
     </div>
   </footer>
+
 </body>
 </html>
