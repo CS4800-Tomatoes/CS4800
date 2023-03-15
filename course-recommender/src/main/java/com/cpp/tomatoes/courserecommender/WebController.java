@@ -18,12 +18,13 @@ import com.google.gson.JsonObject;
 
 @RestController
 public class WebController {
+    private MongoRepo _repo;
+    private Tag[] _tagList;
 
-    private Dictionary<String,String> _keywordToTagMap;
     public WebController()
     {
-        _keywordToTagMap = new Hashtable<String,String>();
-        _keywordToTagMap.put("test", "hello");
+        _repo = new MongoRepo();
+        _tagList = _repo.getAllTags();
     }
 
     @GetMapping(path = "/welcome")
@@ -72,7 +73,7 @@ public class WebController {
         {
             return "Missing Params";
         }
-        MongoRepo repo = new MongoRepo("classes");
+        MongoRepo repo = new MongoRepo();
         return repo.findCourses(courseNum);
     }
 
@@ -84,25 +85,19 @@ public class WebController {
         {
             return "Missing Params";
         }
-        MongoRepo repo = new MongoRepo("classes");
         
-        String[] tags = findTagsFromKeyWords(searchString);
-        if(tags.length == 0)
+        int[] tagIdList = findTagIdsFromSearchString(searchString);
+        if(tagIdList.length == 0)
         {
             return "Nothing";
         }
 
-
-        String result = "";
-        for(String tag : tags)
-        {
-            result += tag + " ";
-        }
+        String result = _repo.findCourses(tagIdList);
 
         return result;
     }
 
-    private String[] findTagsFromKeyWords(String searchString)
+    private int[] findTagIdsFromSearchString(String searchString)
     {
         //turn string into arry
         //check if any of these words are keywords
@@ -110,15 +105,24 @@ public class WebController {
         //return arry of tags
 
         String[] splitSearchString = searchString.split(" ");
-        ArrayList<String> list = new ArrayList<String>();
-        for(String s: splitSearchString)
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        for(String token: splitSearchString)
         {
-            String tag = _keywordToTagMap.get(s);
-            if(tag != null)
+            for(Tag tag: _tagList)
             {
-                list.add(tag);
+                String tagName = tag.getTagName();
+                if(token.toLowerCase().equals(tagName.toLowerCase()))
+                {
+                    list.add(tag.getTagId());
+                }
             }
         }
-        return list.toArray(new String[list.size()]);
+        return list.stream().mapToInt(i -> i).toArray();
+    }
+
+    @GetMapping(path = "/test")
+    public String test()
+    {
+        return "Hi Test Complete";
     }
 }
