@@ -67,14 +67,42 @@
     padding: 7px 7px;
     border-color: grey;
 }
+/* --------------------------------------------------------------------------------------- */
+/* Cards */
+.cards-Section{
+    display: flex;
+    justify-content: center;
+    background-color: brown;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.cards-Container{
+    background-color: green;
+    min-width: 30%;
+    margin: 10px;
+    display: inline-block;
+}
+.cards-Title{
+    background-color: greenyellow;
+}
+.cards-Description{
+    background-color: goldenrod;
+}
 
 /* -------------------------------------------------------------------------------------- */
 /* Footer */
 /* container for footer*/
+.footer{
+    width: 100%;
+    bottom: 0;
+}
+
 .footer-Container{
     background-color: #8a120a;
     display:flex;
     justify-content: center;
+    
 }
 
 /* left contatiner */
