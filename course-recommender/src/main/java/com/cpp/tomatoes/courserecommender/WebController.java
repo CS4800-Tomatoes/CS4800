@@ -2,8 +2,6 @@ package com.cpp.tomatoes.courserecommender;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
