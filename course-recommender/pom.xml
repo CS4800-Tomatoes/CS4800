@@ -47,6 +47,14 @@
 			<artifactId>mongodb-driver-sync</artifactId>
 			<version>4.8.2</version>
 		</dependency>
+
+		<!-- Adding JUnit into dependencies  -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
