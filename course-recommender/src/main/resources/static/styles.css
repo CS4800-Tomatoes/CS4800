@@ -39,9 +39,10 @@
 /* ------------------------------------------------------------------------------------- */
 /* Searching section */
 .top{
-    margin-top: 5%;
+    margin-top: 1%;
     text-align: center;
-    position:relative;
+    position: -webkit-sticky;
+
 }
 .button{
     background-color: #d99a71;
@@ -70,11 +71,13 @@
 /* --------------------------------------------------------------------------------------- */
 /* Cards */
 .cards-Section{
-    display: flex;
+    display: grid;
     justify-content: center;
-    background-color: brown;
-    margin-left: 10px;
-    margin-right: 10px;
+    grid-auto-flow: column;
+    grid-auto-columns: 30%;
+    gap: 10px 10px;
+    grid-column-start: 1;
+    grid-column-end: 3;
 }
 
 .cards-Container{
@@ -109,13 +112,13 @@
 .footer-Left{
     text-align: center;
     float: left;
-    display: inline;
+    display: flexbox;
     padding: 5px 10px;
     color: white;
 }
 /* middle container */
 .footer-Middle{
-    display: inline;
+    display: flexbox;
     float: left;
     padding: 5px 10px;
     margin-left: 10%;
@@ -124,7 +127,7 @@
 }
 /* right container */
 .footer-Right{
-    display: inline;
+    display: flexbox;
     border: 30%;
     float:left;
     padding: 5px 10px;
