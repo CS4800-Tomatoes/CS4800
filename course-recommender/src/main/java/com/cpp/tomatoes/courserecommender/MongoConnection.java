@@ -10,7 +10,6 @@ import com.mongodb.ServerApiVersion;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 
 public class MongoConnection {
     private MongoClient _client;
@@ -19,7 +18,7 @@ public class MongoConnection {
     {
         if(_client == null)
         {
-            String url = "mongodb+srv://msarmiento1621:tXGN4XFKuOcyse19@cluster0.qnobfqx.mongodb.net/?retryWrites=true&w=majority";
+            String url = "mongodb+srv://msarmiento1621:XK3624rsFYymvhY2@cluster0.qnobfqx.mongodb.net/?retryWrites=true&w=majority";
             ConnectionString connectionString = new ConnectionString(url);
             MongoClientSettings settings = MongoClientSettings.builder()
             .applyConnectionString(connectionString)
