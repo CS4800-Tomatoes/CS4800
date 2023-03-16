@@ -22,7 +22,9 @@ $(document).ready(function()
                     //Step 1: create a list of the courses that match the tags of the searched words
                     
                     //Step 2: Populate into cards
+
                     //Step 3: Add a cute tomato at the bottom of the card to show matches/top recommendations
+                    
                 },
                 error: function(error){
                     alert("There was an issue :(")

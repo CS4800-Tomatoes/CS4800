@@ -1,5 +1,5 @@
 :root{
-    background-color: #faeee6;
+    background-color: white;
     font-family: "Verdana";
 }
 /* --------------------------------------------------------------------------------------- */
@@ -40,6 +40,7 @@
 /* Searching section */
 .top{
     margin-top: 1%;
+    padding-bottom: 1%;
     text-align: center;
     position: -webkit-sticky;
 
@@ -105,12 +106,11 @@
     background-color: #8a120a;
     display:flex;
     justify-content: center;
-    
 }
 
 /* left contatiner */
 .footer-Left{
-    text-align: center;
+    text-align: left;
     float: left;
     display: flexbox;
     padding: 5px 10px;
@@ -119,6 +119,7 @@
 /* middle container */
 .footer-Middle{
     display: flexbox;
+    text-align: center;
     float: left;
     padding: 5px 10px;
     margin-left: 10%;
@@ -128,6 +129,7 @@
 /* right container */
 .footer-Right{
     display: flexbox;
+    text-align: right;
     border: 30%;
     float:left;
     padding: 5px 10px;
