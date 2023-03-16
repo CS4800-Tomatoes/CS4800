@@ -1,28 +1,35 @@
 package com.cpp.tomatoes.courserecommender;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cpp.tomatoes.courserecommender.DTO.ClassJsonResult;
+import com.cpp.tomatoes.courserecommender.Models.Class;
+import com.cpp.tomatoes.courserecommender.Models.SuccessCode;
+import com.cpp.tomatoes.courserecommender.Models.Tag;
+import com.cpp.tomatoes.courserecommender.Mongo.MongoRepo;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 
 @RestController
 public class WebController {
     private MongoRepo _repo;
     private Tag[] _tagList;
+    private Gson _gson;
 
     public WebController()
     {
         _repo = new MongoRepo();
         _tagList = _repo.getAllTags();
+        _gson = new Gson();
     }
 
     @GetMapping(path = "/welcome")
@@ -30,39 +37,6 @@ public class WebController {
     {
         return "Hi Mady";
     }
-
-    @GetMapping(path = "/jsoupExample")
-    public String jsoupExample()
-    {
-        JsonObject jsonObject = new JsonObject();
-        Document doc;
-        try {
-
-            // need http protocol
-            doc = Jsoup.connect("http://google.com").get();
-
-            // get page title
-            String title = doc.title();
-            jsonObject.addProperty("title", title);
-
-            JsonArray jsonArray = new JsonArray();
-            // get all links
-            Elements links = doc.select("a[href]");
-            for (Element link : links) {
-
-                JsonObject innerObject = new JsonObject();
-                innerObject.addProperty("link", link.attr("href"));
-                innerObject.addProperty("text", link.text());
-                jsonArray.add(innerObject);
-            }
-            jsonObject.add("ArrayOfLinks", jsonArray);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return jsonObject.toString();
-    }
-
 
     @GetMapping(path = "/mongoSearchCourseNum")
     public String mongoSearch(@RequestParam Integer courseNum)
@@ -78,21 +52,50 @@ public class WebController {
     @GetMapping(path = "/mongoSearch")
     public String mongoSearch(@RequestParam String searchString)
     {
+        ClassJsonResult result = new ClassJsonResult();
         //Make this return a json
         if(searchString == null)
         {
-            return "Missing Params";
+            result.setStatus(SuccessCode.EMPTY);
+            result.setErrorMessages("Missing Search String");
+            return _gson.toJson(result);
         }
         
         int[] tagIdList = findTagIdsFromSearchString(searchString);
+
         if(tagIdList.length == 0)
         {
-            return "Nothing";
+            result.setStatus(SuccessCode.EMPTY);
+            result.setErrorMessages("No Results Found");
+            return _gson.toJson(result);
         }
 
-        String result = _repo.findCourses(tagIdList);
+        JsonArray jsonResult = _repo.findCoursebyTag(tagIdList[0]);
 
-        return result;
+        ArrayList<Class> classList = new ArrayList<Class>();
+        for(JsonElement json: jsonResult)
+        {
+            //JsonObject obj = json.getAsJsonObject();
+            try {
+                // JsonObject obj = json.getAsJsonObject();
+                // Class classObj = new Class();
+                // classObj.setClassName(obj.get("Class Name").getAsString());
+                // classObj.setCourseNumber(obj.get("Course Number").getAsInt());
+                // classObj.setDescription(obj.get("Description").getAsString());
+
+                JsonObject obj2 = JsonParser.parseString(json.getAsString()).getAsJsonObject();
+
+                Class classObj = _gson.fromJson(obj2, Class.class);
+                classList.add(classObj);
+            } catch (Exception e) {
+                return e.getMessage() + "|Padding|" + json.getAsString();
+            }
+        }
+
+        result.setStatus(SuccessCode.SUCCESS);
+        result.setClassList(classList.toArray(new Class[classList.size()]));
+
+        return _gson.toJson(result);
     }
 
     private int[] findTagIdsFromSearchString(String searchString)
@@ -116,11 +119,5 @@ public class WebController {
             }
         }
         return list.stream().mapToInt(i -> i).toArray();
-    }
-
-    @GetMapping(path = "/test")
-    public String test()
-    {
-        return "Hi Test Complete";
     }
 }

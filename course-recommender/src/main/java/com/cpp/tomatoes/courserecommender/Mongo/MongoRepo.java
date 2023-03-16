@@ -1,20 +1,18 @@
-package com.cpp.tomatoes.courserecommender;
+package com.cpp.tomatoes.courserecommender.Mongo;
 
-import static com.mongodb.client.model.Filters.elemMatch;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.springframework.boot.json.GsonJsonParser;
 
+import com.cpp.tomatoes.courserecommender.Models.Tag;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
 
 public class MongoRepo {
     private static String DATABASE = "Class_Recommender";
@@ -37,27 +35,45 @@ public class MongoRepo {
         return result.toString();
     }
 
-    public String findCourses(int[] tagIdList)
+    public JsonArray findCoursebyTag(int tagId)
     {
         //If recieve multiple tags return json that separates them both
         MongoCollection<Document> classesCollection = _connection.getCollection(DATABASE, "classes");
         
         JsonArray result = new JsonArray();
-        for(int tagId: tagIdList)
-        {
-            Bson filter = Filters.in("Tag", tagId);
-            var documents = classesCollection.find(filter);
-            documents.forEach(doc -> {
-                result.add(doc.toJson());
-            });
-            //Currently we just take the first tagId in tagIdList and return its results
-            break;
-        }
-        if(result.size() == 0)
-            return "Nothing here";
-        return result.toString();
-        
+        Bson filter = Filters.in("Tag", tagId);
+        var documents = classesCollection.find(filter);
+        //.projection(Projections.exclude("_id"));
+        documents.forEach(doc -> {
+            result.add(doc.toJson());
+        });
+
+        //Currently we just take the first tagId in tagIdList and return its results
+        return result;
     }
+
+
+    // public String findCourses(int[] tagIdList)
+    // {
+    //     //If recieve multiple tags return json that separates them both
+    //     MongoCollection<Document> classesCollection = _connection.getCollection(DATABASE, "classes");
+        
+    //     JsonArray result = new JsonArray();
+    //     for(int tagId: tagIdList)
+    //     {
+    //         Bson filter = Filters.in("Tag", tagId);
+    //         var documents = classesCollection.find(filter);
+    //         documents.forEach(doc -> {
+    //             result.add(doc.toJson());
+    //         });
+    //         //Currently we just take the first tagId in tagIdList and return its results
+    //         break;
+    //     }
+    //     if(result.size() == 0)
+    //         return "Nothing here";
+    //     return result.toString();
+        
+    // }
     
     public Tag[] getAllTags()
     {

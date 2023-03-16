@@ -1,4 +1,4 @@
-package com.cpp.tomatoes.courserecommender;
+package com.cpp.tomatoes.courserecommender.Mongo;
 
 
 import org.bson.Document;

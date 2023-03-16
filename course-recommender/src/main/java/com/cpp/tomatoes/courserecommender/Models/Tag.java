@@ -1,4 +1,4 @@
-package com.cpp.tomatoes.courserecommender;
+package com.cpp.tomatoes.courserecommender.Models;
 
 import com.google.gson.JsonObject;
 
