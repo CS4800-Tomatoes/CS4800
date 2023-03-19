@@ -1,7 +1,8 @@
 package com.cpp.tomatoes.courserecommender.Models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Class {
-    
     private ObjectId _id;
     public ObjectId get_id() {
         return _id;
@@ -10,8 +11,11 @@ public class Class {
         this._id = _id;
     }
 
+    @SerializedName("Course Number")
     private int _courseNumber;
+    @SerializedName("Class Name")
     private String _className;
+    @SerializedName("Description")
     private String _description;
 
     public void setCourseNumber(int num){_courseNumber = num;}
