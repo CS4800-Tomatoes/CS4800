@@ -48,14 +48,61 @@ $(document).ready(function()
                 },
                 success: function (res){
                     var jason = JSON.parse(res);
-                    if(jason["_status"] == 1){
-                        alert("The result from this server is: " + res);
-                    }
-                    //Step 1: create a list of the courses that match the tags of the searched words
-                    
-                    //Step 2: Populate into cards
+                    if(jason["status"] == 1){
+                        //finding the important elements in DOM tree :)
+                        //container == the things we putting the other things in
+                        //<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"> == other divider
+                        
+                        //   <div class="col-4">
+                        //     <div class="card" style="width: 18rem;">
+                        //       <img class="card-img-top" src="https://i.kym-cdn.com/editorials/icons/mobile/000/001/508/hackerman-icon.jpg" alt="Card image cap">
+                        //       <div class="card-body">
+                        //         <h6>Class Title</h6>
+                        //         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        //       </div>
+                        //     </div>
+                        //   </div>
+                        alert(res);
+                        cardContainer = document.getElementById("cardContainer");
+                        cardContainer.innerHTML = "";
 
-                    //Step 3: Add a cute tomato at the bottom of the card to show matches/top recommendations
+                        items = jason["classData"].length;
+                        for(let step = 0; step < items; step++){
+                            var results = jason["classData"][step];
+                            var courseNum = results["Course Number"];
+                            var className = results["Class Name"];
+
+                            //Create items
+                            var column = document.createElement("div");
+                            column.setAttribute("class", "col-4");
+                            var cardStyle = document.createElement("div");
+                            cardStyle.setAttribute("class", "card");
+                            cardStyle.setAttribute("style", "width: 18rem");
+                            var img = document.createElement("img");
+                            img.setAttribute("class", "card-img-top");
+                            img.setAttribute("src", "https://i.kym-cdn.com/editorials/icons/mobile/000/001/508/hackerman-icon.jpg");
+                            var cardBody = document.createElement("div");
+                            cardBody.setAttribute("class", "card-body");
+                            var cardTitle = document.createElement("h6");
+                            var description = document.createElement("p");
+                            cardTitle.innerText = courseNum;
+                            description.innerText = className;
+
+                            //append to parents
+                            cardBody.appendChild(cardTitle);
+                            cardBody.appendChild(description);
+                            cardStyle.appendChild(img);
+                            cardStyle.appendChild(cardBody);
+                            column.appendChild(cardStyle);
+
+                            //add to DOM tree
+                            cardContainer.appendChild(column);
+                        }
+
+                    }
+                    else{
+                        alert("Bruh");
+                    }
                     
                 },
                 error: function(error){
