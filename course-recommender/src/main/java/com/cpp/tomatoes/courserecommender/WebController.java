@@ -75,14 +75,7 @@ public class WebController {
         ArrayList<Class> classList = new ArrayList<Class>();
         for(JsonElement json: jsonResult)
         {
-            //JsonObject obj = json.getAsJsonObject();
             try {
-                // JsonObject obj = json.getAsJsonObject();
-                // Class classObj = new Class();
-                // classObj.setClassName(obj.get("Class Name").getAsString());
-                // classObj.setCourseNumber(obj.get("Course Number").getAsInt());
-                // classObj.setDescription(obj.get("Description").getAsString());
-
                 JsonObject obj2 = JsonParser.parseString(json.getAsString()).getAsJsonObject();
 
                 Class classObj = _gson.fromJson(obj2, Class.class);
@@ -109,15 +102,21 @@ public class WebController {
         ArrayList<Integer> list = new ArrayList<Integer>();
         for(String token: splitSearchString)
         {
+            String sanitizedToken = sanitizeString(token);
             for(Tag tag: _tagList)
             {
                 String tagName = tag.getTagName();
-                if(token.toLowerCase().equals(tagName.toLowerCase()))
+                if(sanitizedToken.toLowerCase().equals(tagName.toLowerCase()))
                 {
                     list.add(tag.getTagId());
                 }
             }
         }
         return list.stream().mapToInt(i -> i).toArray();
+    }
+
+    private String sanitizeString(String str)
+    {
+        return str.replaceAll("[^a-zA-Z]", "");
     }
 }
