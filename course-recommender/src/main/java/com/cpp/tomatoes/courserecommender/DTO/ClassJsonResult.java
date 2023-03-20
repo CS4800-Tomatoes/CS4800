@@ -1,10 +1,14 @@
 package com.cpp.tomatoes.courserecommender.DTO;
 
 import com.cpp.tomatoes.courserecommender.Models.Class;
+import com.google.gson.annotations.SerializedName;
 
 public class ClassJsonResult {
+    @SerializedName("status")
     private int _status;
+    @SerializedName("errorMessage")
     private String _errorMessage;
+    @SerializedName("classData")
     private Class[] _classList;
 
     public void setStatus(int status){_status = status;}
