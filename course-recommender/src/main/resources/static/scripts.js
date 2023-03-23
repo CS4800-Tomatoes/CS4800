@@ -67,35 +67,34 @@ $(document).ready(function()
                         cardContainer.innerHTML = "";
 
                         items = jason["classData"].length;
-                        const cards = [];
-                        var count = 1;
+                        var cards = [0, 0, 0];
+                        var count = 0;
 
-                        if(items <4){
-                            for(let step=0; step<items; step++){
-                                cards[step] = createCard(results, courseNum, className);
+                        for(let step = 0; step < items; step++){
+                            var results = jason["classData"][step];
+                            var courseNum = results["Course Number"];
+                            var className = results["Class Name"];
+                            
+                            //add to DOM tree
+                            cards[count%3] = createCard(results, courseNum, className);
+                            if(count%3 == 2 || count+1 == items){
                                 var row = document.createElement("div");
                                 row.setAttribute("class", "row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3")
-                                cardContainer.appendChild(row);
-                                row.appendChild(cards)
-                            }
-                        }
-                        else{
-                            for(let step = 0; step < items; step++){
-                                var results = jason["classData"][step];
-                                var courseNum = results["Course Number"];
-                                var className = results["Class Name"];
                                 
-                                //add to DOM tree
-                                cards[count%3-1] = createCard(results, courseNum, className);
-                                if(count%3 == 0){
-                                    var row = document.createElement("div");
-                                    row.setAttribute("class", "row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3")
-                                    cardContainer.appendChild(row);
-                                    row.appendChild(cards)
+                                for(let i = 0; i < 3; i++)
+                                {
+                                    if(cards[i] != 0)
+                                    {
+                                        row.appendChild(cards[i]);
+                                    }
                                 }
-                                count++;
+
+                                cards = [0, 0, 0]
+                                
+                                //Add to container
+                                cardContainer.appendChild(row);
                             }
-                        
+                            count++;
                         }
 
                     }
