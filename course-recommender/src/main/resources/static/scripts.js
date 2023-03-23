@@ -51,7 +51,8 @@ $(document).ready(function()
                     if(jason["status"] == 1){
                         //finding the important elements in DOM tree :)
                         //container == the things we putting the other things in
-                        //<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"> == other divider
+                        //<div card container>
+                        //  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"> == other divider
                         
                         //   <div class="col-4">
                         //     <div class="card" style="width: 18rem;">
@@ -62,46 +63,44 @@ $(document).ready(function()
                         //       </div>
                         //     </div>
                         //   </div>
-                        alert(res);
                         cardContainer = document.getElementById("cardContainer");
                         cardContainer.innerHTML = "";
 
                         items = jason["classData"].length;
-                        for(let step = 0; step < items; step++){
-                            var results = jason["classData"][step];
-                            var courseNum = results["Course Number"];
-                            var className = results["Class Name"];
+                        const cards = [];
+                        var count = 1;
 
-                            //Create items
-                            var column = document.createElement("div");
-                            column.setAttribute("class", "col-4");
-                            var cardStyle = document.createElement("div");
-                            cardStyle.setAttribute("class", "card");
-                            cardStyle.setAttribute("style", "width: 18rem");
-                            var img = document.createElement("img");
-                            img.setAttribute("class", "card-img-top");
-                            img.setAttribute("src", "https://i.kym-cdn.com/editorials/icons/mobile/000/001/508/hackerman-icon.jpg");
-                            var cardBody = document.createElement("div");
-                            cardBody.setAttribute("class", "card-body");
-                            var cardTitle = document.createElement("h6");
-                            var description = document.createElement("p");
-                            cardTitle.innerText = courseNum;
-                            description.innerText = className;
-
-                            //append to parents
-                            cardBody.appendChild(cardTitle);
-                            cardBody.appendChild(description);
-                            cardStyle.appendChild(img);
-                            cardStyle.appendChild(cardBody);
-                            column.appendChild(cardStyle);
-
-                            //add to DOM tree
-                            cardContainer.appendChild(column);
+                        if(items <4){
+                            for(let step=0; step<items; step++){
+                                cards[step] = createCard(results, courseNum, className);
+                                var row = document.createElement("div");
+                                row.setAttribute("class", "row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3")
+                                cardContainer.appendChild(row);
+                                row.appendChild(cards)
+                            }
+                        }
+                        else{
+                            for(let step = 0; step < items; step++){
+                                var results = jason["classData"][step];
+                                var courseNum = results["Course Number"];
+                                var className = results["Class Name"];
+                                
+                                //add to DOM tree
+                                cards[count%3-1] = createCard(results, courseNum, className);
+                                if(count%3 == 0){
+                                    var row = document.createElement("div");
+                                    row.setAttribute("class", "row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3")
+                                    cardContainer.appendChild(row);
+                                    row.appendChild(cards)
+                                }
+                                count++;
+                            }
+                        
                         }
 
                     }
                     else{
-                        alert("Bruh");
+                        alert("That is not a valid tag. Hint: Try \"AI\" or \"Programming\"");
                     }
                     
                 },
@@ -127,24 +126,30 @@ $(document).ready(function()
     });
 });
 
+function createCard(results, courseNum, className){
+    //Create items
+    var column = document.createElement("div");
+    column.setAttribute("class", "col-4");
+    var cardStyle = document.createElement("div");
+    cardStyle.setAttribute("class", "card");
+    cardStyle.setAttribute("style", "width: 18rem");
+    var img = document.createElement("img");
+    img.setAttribute("class", "card-img-top");
+    img.setAttribute("src", "https://i.kym-cdn.com/editorials/icons/mobile/000/001/508/hackerman-icon.jpg");
+    var cardBody = document.createElement("div");
+    cardBody.setAttribute("class", "card-body");
+    var cardTitle = document.createElement("h6");
+    var description = document.createElement("p");
+    cardTitle.innerText = courseNum;
+    description.innerText = className;
 
-// window.addEventListener('DOMContentLoaded', event=>{
-//     const main = document.body.querySelector('#mainNav');
-//     if(mainNav){
-//         new bootstrap.ScrollSpy(document.body, {
-//             target: '#mainNav',
-//             offset: 74,
-//         });
-//     };
+    //append to parents
+    cardBody.appendChild(cardTitle);
+    cardBody.appendChild(description);
+    cardStyle.appendChild(img);
+    cardStyle.appendChild(cardBody);
+    column.appendChild(cardStyle);
 
-//     const navbarToggler = document.body.querySelector('.navbar-toggler');
-//     const responsiveNavItems = [].slice.call(document.querySelectorAll('#navbarResponsice .nav-link'));
+    return column;
+}
 
-//     responsiveNavItems.map(function (responsiveNavItems){
-//         responsiveNavItems.addEventListener('click', ()=> {
-//             if(window.getComputedStyle(navbarToggler).display !== 'none'){
-//                 navbarToggler.click();
-//             }
-//         });
-//     });
-// });
