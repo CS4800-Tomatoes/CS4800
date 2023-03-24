@@ -72,15 +72,20 @@ public class WebController {
             return _gson.toJson(result);
         }
 
-        JsonArray jsonResult = _repo.findCoursebyTag(tagIdList[0]);
-
+        JsonArray jsonResult = _repo.findCoursesByTagIds(tagIdList);
+        //If tags are valid, then there should be a result.
+        //Since we get no results even with tags existing, something is wrong
+        if(jsonResult.size() == 0)
+        {
+            result.setStatus(SuccessCode.EXCEPTION);
+            result.setErrorMessages("Something went wrong");
+            return _gson.toJson(result);
+        }
         ArrayList<Class> classList = new ArrayList<Class>();
         for(JsonElement json: jsonResult)
         {
             try {
-                JsonObject obj2 = JsonParser.parseString(json.getAsString()).getAsJsonObject();
-
-                Class classObj = _gson.fromJson(obj2, Class.class);
+                Class classObj = _gson.fromJson(json, Class.class);
                 classList.add(classObj);
             } catch (Exception e) {
                 return e.getMessage() + "|Padding|" + json.getAsString();
