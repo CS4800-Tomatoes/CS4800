@@ -18,6 +18,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import ch.qos.logback.core.joran.conditional.ElseAction;
+
 
 @RestController
 public class WebController {
@@ -70,15 +72,20 @@ public class WebController {
             return _gson.toJson(result);
         }
 
-        JsonArray jsonResult = _repo.findCoursebyTag(tagIdList[0]);
-
+        JsonArray jsonResult = _repo.findCoursesByTagIds(tagIdList);
+        //If tags are valid, then there should be a result.
+        //Since we get no results even with tags existing, something is wrong
+        if(jsonResult.size() == 0)
+        {
+            result.setStatus(SuccessCode.EXCEPTION);
+            result.setErrorMessages("Something went wrong");
+            return _gson.toJson(result);
+        }
         ArrayList<Class> classList = new ArrayList<Class>();
         for(JsonElement json: jsonResult)
         {
             try {
-                JsonObject obj2 = JsonParser.parseString(json.getAsString()).getAsJsonObject();
-
-                Class classObj = _gson.fromJson(obj2, Class.class);
+                Class classObj = _gson.fromJson(json, Class.class);
                 classList.add(classObj);
             } catch (Exception e) {
                 return e.getMessage() + "|Padding|" + json.getAsString();
@@ -97,18 +104,23 @@ public class WebController {
         //check if any of these words are keywords
         //use map to turn keywords to tags
         //return arry of tags
+        String delimiter = " ";
 
-        String[] splitSearchString = searchString.split(" ");
+        String[] splitSearchString = searchString.split(delimiter);
         ArrayList<Integer> list = new ArrayList<Integer>();
-        for(String token: splitSearchString)
+        
+        for(int i = 0; i < splitSearchString.length; i++)
         {
-            String sanitizedToken = sanitizeString(token);
             for(Tag tag: _tagList)
             {
-                String tagName = tag.getTagName();
-                if(sanitizedToken.toLowerCase().equals(tagName.toLowerCase()))
+                String[] tagName = tag.getTagName().split(delimiter);
+                for(int j = 0; j < tagName.length && j+i < splitSearchString.length; j++)
                 {
-                    list.add(tag.getTagId());
+                    String token = sanitizeString(splitSearchString[i+j]).toLowerCase();
+                    if(!token.equals(tagName[j].toLowerCase()))
+                        break;
+                    else if(tagName.length == j+1)
+                        list.add(tag.getTagId());
                 }
             }
         }

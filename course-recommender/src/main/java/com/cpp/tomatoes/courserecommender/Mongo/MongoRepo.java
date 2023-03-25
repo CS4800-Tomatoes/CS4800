@@ -3,13 +3,17 @@ package com.cpp.tomatoes.courserecommender.Mongo;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
-
+import com.cpp.tomatoes.courserecommender.Models.Class;
 import com.cpp.tomatoes.courserecommender.Models.Tag;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
@@ -35,7 +39,7 @@ public class MongoRepo {
         return result.toString();
     }
 
-    public JsonArray findCoursebyTag(int tagId)
+    public JsonArray findCoursesByTagId(int tagId)
     {
         //If recieve multiple tags return json that separates them both
         MongoCollection<Document> classesCollection = _connection.getCollection(DATABASE, "classes");
@@ -45,11 +49,39 @@ public class MongoRepo {
         var documents = classesCollection.find(filter);
         //.projection(Projections.exclude("_id"));
         documents.forEach(doc -> {
-            result.add(doc.toJson());
+            JsonObject jsonDoc = JsonParser.parseString(doc.toJson()).getAsJsonObject();
+            result.add(jsonDoc);
         });
 
         //Currently we just take the first tagId in tagIdList and return its results
         return result;
+    }
+
+    public JsonArray findCoursesByTagIds(int[] tagIds)
+    {
+        Gson _gson = new Gson();
+        JsonArray jsonArray = new JsonArray();
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        try {
+            for(int tagId : tagIds)
+            {
+                JsonArray courses = findCoursesByTagId(tagId);
+                for(JsonElement el: courses)
+                {
+                    Class classObj = _gson.fromJson(el, Class.class);
+                    int courseNum = classObj.getCourseNum();
+                    if(!list.contains(courseNum))
+                    {
+                        list.add(courseNum);
+                        jsonArray.add(el);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            return new JsonArray();
+        }
+        
+        return jsonArray;
     }
 
 
