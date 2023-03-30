@@ -1,9 +1,10 @@
 //pulling the search bar and search button from the html to be used
-
+var footer;
 $(document).ready(function()
 {
     var search_bar = document.getElementById("search_bar");
     var search_button = document.getElementById("search_button");
+    footer = document.getElementById("footer");
 
     // for seraching up them classes 
     function search(courseNumber){
@@ -63,40 +64,7 @@ $(document).ready(function()
                         //       </div>
                         //     </div>
                         //   </div>
-                        cardContainer = document.getElementById("cardContainer");
-                        cardContainer.innerHTML = "";
-
-                        items = jason["classData"].length;
-                        var cards = [0, 0, 0];
-                        var count = 0;
-
-                        for(let step = 0; step < items; step++){
-                            var results = jason["classData"][step];
-                            var courseNum = results["Course Number"];
-                            var className = results["Class Name"];
-                            
-                            //add to DOM tree
-                            cards[count%3] = createCard(results, courseNum, className);
-                            if(count%3 == 2 || count+1 == items){
-                                var row = document.createElement("div");
-                                row.setAttribute("class", "row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3")
-                                
-                                for(let i = 0; i < 3; i++)
-                                {
-                                    if(cards[i] != 0)
-                                    {
-                                        row.appendChild(cards[i]);
-                                    }
-                                }
-
-                                cards = [0, 0, 0]
-                                
-                                //Add to container
-                                cardContainer.appendChild(row);
-                            }
-                            count++;
-                        }
-
+                        mongodbDataToCards(jason);
                     }
                     else{
                         alert("That is not a valid tag. Hint: Try \"AI\" or \"Programming\"");
@@ -123,15 +91,73 @@ $(document).ready(function()
             searchBar.value = "";
         }
     });
+
+    document.getElementById("test_button").addEventListener("click", () => {
+        fakeData();
+    });
 });
+
+function fakeData(){
+    var fakeJson = '{"status":1,"classData":[{"_id":{"$oid":"63f3d09c53536d5016712d9f"},"Course Number":4200,"Class Name":"Artificial Intelligence","Description":"Overview of the different application areas of AI. Introduction to the basic AI concepts and techniques such as heuristic search, knowledge representation, automated reasoning. In-depth discussion of several AI application areas: their specific problems, tools and techniques."},{"_id":{"$oid":"64094700f1ce5c225d4fb181"},"Course Number":4210,"Class Name":"Machine Learning and its Applications","Description":"Supervised learning techniques, including linear models for regression, linear models for classification, decision trees, support vector machines, neural networks. Unsupervised learning techniques, including clustering and dimensionality reduction. Related advanced topics. Case studies and applications."},{"_id":{"$oid":"6409476cf1ce5c225d4fb183"},"Course Number":3520,"Class Name":"Symbolic Programming","Description":"Languages for processing symbolic data with emphasis on applications in artificial intelligence."},{"_id":{"$oid":"63f3d06753536d5016709a67"},"Course Number":4800,"Class Name":"Software Engineering","Description":"Models of the software development process and metrics. Software requirements and specifications. Methodologies, tools and environments. Human-computer interaction. Software architecture, design and implementation techniques. Project management. Cost estimation. Testing and validation. Automated build, deployment and continuous integration. Maintenance and evolution."},{"_id":{"$oid":"6409448ff1ce5c225d4fb17a"},"Course Number":2450,"Class Name":"Programming Graphical User Interfaces","Description":"Computer interfaces. Usability of interactive systems. GUI development processes. GUI components. Input and viewing devices. Event-handling. Animation use in GUIs. Problem-solving techniques. Introduction to Human-Computer Interface."},{"_id":{"$oid":"64094512f1ce5c225d4fb17b"},"Course Number":3560,"Class Name":"Objected-Oriented Design and Programming","Description":"Elements of the object model. Abstraction, encapsulation, modularity, hierarchy and polymorphism. Object-oriented design principles. Design patterns. Implementation and programming of system design. Object and portable data. Comprehensive examples using a case study approach."},{"_id":{"$oid":"640946d1f1ce5c225d4fb180"},"Course Number":4750,"Class Name":"Mobile Application Development","Description":"Mobile development environments and fundamentals. Mobile user interface (UI) design and implementation. Mobile data storage and management. Network programming in mobile and integration with cloud services. Advanced mobile development with external sensors, libraries and frameworks. Hands-on mobile development practices and the distribution of mobile applications. Mobile application security."}]}';
+    var jason = JSON.parse(fakeJson);
+    if(jason["status"] == 1)
+    {
+        mongodbDataToCards(jason);
+    }
+    else{
+        alert("That is not a valid tag. Hint: Try \"AI\" or \"Programming\"");
+    }
+}
+
+function mongodbDataToCards(pojo)
+{
+    var jason = pojo;
+    cardContainer = document.getElementById("cardContainer");
+    cardContainer.innerHTML = "";
+
+    items = jason["classData"].length;
+    if(items > 0)
+    {
+        footer.classList.remove('fixed-bottom');
+    }
+    var cards = [0, 0, 0];
+    var count = 0;
+
+    for(let step = 0; step < items; step++){
+        var results = jason["classData"][step];
+        var courseNum = results["Course Number"];
+        var className = results["Class Name"];
+        
+        //add to DOM tree
+        cards[count%3] = createCard(results, courseNum, className);
+        if(count%3 == 2 || count+1 == items){
+            var row = document.createElement("div");
+            row.setAttribute("class", "row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3")
+            
+            for(let i = 0; i < 3; i++)
+            {
+                if(cards[i] != 0)
+                {
+                    row.appendChild(cards[i]);
+                }
+            }
+
+            cards = [0, 0, 0]
+            
+            //Add to container
+            cardContainer.appendChild(row);
+        }
+        count++;
+    }
+}
 
 function createCard(results, courseNum, className){
     //Create items
-    var column = document.createElement("div");
-    column.setAttribute("class", "col-4");
+    //var column = document.createElement("div");
+    //column.setAttribute("class", "col-4");
     var cardStyle = document.createElement("div");
-    cardStyle.setAttribute("class", "card");
-    cardStyle.setAttribute("style", "width: 18rem");
+    cardStyle.setAttribute("class", "card col-4");
+    //cardStyle.setAttribute("style", "width: 18rem");
     var img = document.createElement("img");
     img.setAttribute("class", "card-img-top");
     img.setAttribute("src", "https://i.kym-cdn.com/editorials/icons/mobile/000/001/508/hackerman-icon.jpg");
@@ -147,8 +173,8 @@ function createCard(results, courseNum, className){
     cardBody.appendChild(description);
     cardStyle.appendChild(img);
     cardStyle.appendChild(cardBody);
-    column.appendChild(cardStyle);
+    //column.appendChild(cardStyle);
 
-    return column;
+    return cardStyle;
 }
 
