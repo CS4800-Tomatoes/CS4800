@@ -3,7 +3,6 @@ package com.cpp.tomatoes.courserecommender.Mongo;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -16,7 +15,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Projections;
 
 public class MongoRepo {
     private static String DATABASE = "Class_Recommender";
