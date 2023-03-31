@@ -92,22 +92,37 @@ $(document).ready(function()
         }
     });
 
-    document.getElementById("test_button").addEventListener("click", () => {
-        fakeData();
-    });
+    //enter button now can aid in searching :)
+    document.addEventListener("keyup", function(event){
+        if(event.code== 'Enter'){
+            var searchBar = document.getElementById("search_bar");
+            console.dir(searchBar);
+            if(searchBar.value == ""){
+                alert("Please enter in an interest.");
+            }
+            else{
+                searchByString(searchBar.value);
+                searchBar.value = "";
+            }
+        }
+    })
+
+    // document.getElementById("test_button").addEventListener("click", () => {
+    //     fakeData();
+    // });
 });
 
-function fakeData(){
-    var fakeJson = '{"status":1,"classData":[{"_id":{"$oid":"63f3d09c53536d5016712d9f"},"Course Number":4200,"Class Name":"Artificial Intelligence","Description":"Overview of the different application areas of AI. Introduction to the basic AI concepts and techniques such as heuristic search, knowledge representation, automated reasoning. In-depth discussion of several AI application areas: their specific problems, tools and techniques."},{"_id":{"$oid":"64094700f1ce5c225d4fb181"},"Course Number":4210,"Class Name":"Machine Learning and its Applications","Description":"Supervised learning techniques, including linear models for regression, linear models for classification, decision trees, support vector machines, neural networks. Unsupervised learning techniques, including clustering and dimensionality reduction. Related advanced topics. Case studies and applications."},{"_id":{"$oid":"6409476cf1ce5c225d4fb183"},"Course Number":3520,"Class Name":"Symbolic Programming","Description":"Languages for processing symbolic data with emphasis on applications in artificial intelligence."},{"_id":{"$oid":"63f3d06753536d5016709a67"},"Course Number":4800,"Class Name":"Software Engineering","Description":"Models of the software development process and metrics. Software requirements and specifications. Methodologies, tools and environments. Human-computer interaction. Software architecture, design and implementation techniques. Project management. Cost estimation. Testing and validation. Automated build, deployment and continuous integration. Maintenance and evolution."},{"_id":{"$oid":"6409448ff1ce5c225d4fb17a"},"Course Number":2450,"Class Name":"Programming Graphical User Interfaces","Description":"Computer interfaces. Usability of interactive systems. GUI development processes. GUI components. Input and viewing devices. Event-handling. Animation use in GUIs. Problem-solving techniques. Introduction to Human-Computer Interface."},{"_id":{"$oid":"64094512f1ce5c225d4fb17b"},"Course Number":3560,"Class Name":"Objected-Oriented Design and Programming","Description":"Elements of the object model. Abstraction, encapsulation, modularity, hierarchy and polymorphism. Object-oriented design principles. Design patterns. Implementation and programming of system design. Object and portable data. Comprehensive examples using a case study approach."},{"_id":{"$oid":"640946d1f1ce5c225d4fb180"},"Course Number":4750,"Class Name":"Mobile Application Development","Description":"Mobile development environments and fundamentals. Mobile user interface (UI) design and implementation. Mobile data storage and management. Network programming in mobile and integration with cloud services. Advanced mobile development with external sensors, libraries and frameworks. Hands-on mobile development practices and the distribution of mobile applications. Mobile application security."}]}';
-    var jason = JSON.parse(fakeJson);
-    if(jason["status"] == 1)
-    {
-        mongodbDataToCards(jason);
-    }
-    else{
-        alert("That is not a valid tag. Hint: Try \"AI\" or \"Programming\"");
-    }
-}
+// function fakeData(){
+//     var fakeJson = '{"status":1,"classData":[{"_id":{"$oid":"63f3d09c53536d5016712d9f"},"Course Number":4200,"Class Name":"Artificial Intelligence","Description":"Overview of the different application areas of AI. Introduction to the basic AI concepts and techniques such as heuristic search, knowledge representation, automated reasoning. In-depth discussion of several AI application areas: their specific problems, tools and techniques."},{"_id":{"$oid":"64094700f1ce5c225d4fb181"},"Course Number":4210,"Class Name":"Machine Learning and its Applications","Description":"Supervised learning techniques, including linear models for regression, linear models for classification, decision trees, support vector machines, neural networks. Unsupervised learning techniques, including clustering and dimensionality reduction. Related advanced topics. Case studies and applications."},{"_id":{"$oid":"6409476cf1ce5c225d4fb183"},"Course Number":3520,"Class Name":"Symbolic Programming","Description":"Languages for processing symbolic data with emphasis on applications in artificial intelligence."},{"_id":{"$oid":"63f3d06753536d5016709a67"},"Course Number":4800,"Class Name":"Software Engineering","Description":"Models of the software development process and metrics. Software requirements and specifications. Methodologies, tools and environments. Human-computer interaction. Software architecture, design and implementation techniques. Project management. Cost estimation. Testing and validation. Automated build, deployment and continuous integration. Maintenance and evolution."},{"_id":{"$oid":"6409448ff1ce5c225d4fb17a"},"Course Number":2450,"Class Name":"Programming Graphical User Interfaces","Description":"Computer interfaces. Usability of interactive systems. GUI development processes. GUI components. Input and viewing devices. Event-handling. Animation use in GUIs. Problem-solving techniques. Introduction to Human-Computer Interface."},{"_id":{"$oid":"64094512f1ce5c225d4fb17b"},"Course Number":3560,"Class Name":"Objected-Oriented Design and Programming","Description":"Elements of the object model. Abstraction, encapsulation, modularity, hierarchy and polymorphism. Object-oriented design principles. Design patterns. Implementation and programming of system design. Object and portable data. Comprehensive examples using a case study approach."},{"_id":{"$oid":"640946d1f1ce5c225d4fb180"},"Course Number":4750,"Class Name":"Mobile Application Development","Description":"Mobile development environments and fundamentals. Mobile user interface (UI) design and implementation. Mobile data storage and management. Network programming in mobile and integration with cloud services. Advanced mobile development with external sensors, libraries and frameworks. Hands-on mobile development practices and the distribution of mobile applications. Mobile application security."}]}';
+//     var jason = JSON.parse(fakeJson);
+//     if(jason["status"] == 1)
+//     {
+//         mongodbDataToCards(jason);
+//     }
+//     else{
+//         alert("That is not a valid tag. Hint: Try \"AI\" or \"Programming\"");
+//     }
+// }
 
 function mongodbDataToCards(pojo)
 {
@@ -116,20 +131,26 @@ function mongodbDataToCards(pojo)
     cardContainer.innerHTML = "";
 
     items = jason["classData"].length;
+
+    var toe = document.getElementById("toe");
     if(items > 0)
     {
-        footer.classList.remove('fixed-bottom');
+        toe.removeAttribute("class","fixed-bottom");
+    }
+    else{
+        toe.setAttribute("class", "fixed-bottom");
     }
     var cards = [0, 0, 0];
     var count = 0;
 
     for(let step = 0; step < items; step++){
         var results = jason["classData"][step];
+        var desc = results["Description"];
         var courseNum = results["Course Number"];
         var className = results["Class Name"];
         
         //add to DOM tree
-        cards[count%3] = createCard(results, courseNum, className);
+        cards[count%3] = createCard(results, courseNum + ": " + className, desc);
         if(count%3 == 2 || count+1 == items){
             var row = document.createElement("div");
             row.setAttribute("class", "row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3")
@@ -151,7 +172,7 @@ function mongodbDataToCards(pojo)
     }
 }
 
-function createCard(results, courseNum, className){
+function createCard(results, courseTitle, courseDesc){
     //Create items
     //var column = document.createElement("div");
     //column.setAttribute("class", "col-4");
@@ -164,12 +185,16 @@ function createCard(results, courseNum, className){
     var cardBody = document.createElement("div");
     cardBody.setAttribute("class", "card-body");
     var cardTitle = document.createElement("h6");
+    // var descContainer = document.createElement("div");
+    // descContainer.setAttribute("class", "overflow-auto");
+    // descContainer.appendChild(description);
     var description = document.createElement("p");
-    cardTitle.innerText = courseNum;
-    description.innerText = className;
+    cardTitle.innerText = courseTitle;
+    description.innerText = courseDesc;
 
     //append to parents
     cardBody.appendChild(cardTitle);
+    // cardBody.appendChild(descContainer);
     cardBody.appendChild(description);
     cardStyle.appendChild(img);
     cardStyle.appendChild(cardBody);

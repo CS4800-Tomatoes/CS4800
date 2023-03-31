@@ -3,6 +3,11 @@
     font-family: "Verdana";
 }
 /* --------------------------------------------------------------------------------------- */
+/* aesthetic reasons */
+.space{
+    margin: 25px;
+}
+/* --------------------------------------------------------------------------------------- */
 /* navbar at the top --> some point will need to make it like 30 - 70 - 30*/ 
 /* div */
 .navbar-Container{
@@ -38,6 +43,7 @@
 }
 /* ------------------------------------------------------------------------------------- */
 /* Searching section */
+
 .top{
     margin-top: 1%;
     padding-bottom: 1%;
@@ -71,32 +77,12 @@
 }
 /* --------------------------------------------------------------------------------------- */
 /* Cards */
-.cards-Section{
-    display: grid;
-    justify-content: center;
-    grid-auto-flow: column;
-    grid-auto-columns: 30%;
-    gap: 10px 10px;
-    grid-column-start: 1;
-    grid-column-end: 3;
-}
-
-.cards-Container{
-    background-color: green;
-    min-width: 30%;
-    margin: 10px;
-    display: inline-block;
-}
-.cards-Title{
-    background-color: greenyellow;
-}
-.cards-Description{
-    background-color: goldenrod;
-}
 
 /* -------------------------------------------------------------------------------------- */
 /* Footer */
 /* container for footer*/
+
+
 .footer{
     width: 100%;
     bottom: 0;
