@@ -1,4 +1,4 @@
-package com.cpp.tomatoes.courserecommender;
+package com.cpp.tomatoes.courserecommender.Mongo;
 
 
 import org.bson.Document;
@@ -19,7 +19,7 @@ public class MongoConnection {
     {
         if(_client == null)
         {
-            String url = "mongodb+srv://msarmiento1621:tXGN4XFKuOcyse19@cluster0.qnobfqx.mongodb.net/?retryWrites=true&w=majority";
+            String url = "mongodb+srv://msarmiento1621:XK3624rsFYymvhY2@cluster0.qnobfqx.mongodb.net/?retryWrites=true&w=majority";
             ConnectionString connectionString = new ConnectionString(url);
             MongoClientSettings settings = MongoClientSettings.builder()
             .applyConnectionString(connectionString)
@@ -32,13 +32,9 @@ public class MongoConnection {
         }
     }
 
-    public String test()
+    public MongoDatabase getDatabase(String db)
     {
-        String temp = "";
-        for (String name : _client.getDatabase("Class_Recommender").listCollectionNames()) {
-            temp += name + " ";
-        }
-        return temp;
+        return _client.getDatabase(db);
     }
 
     public MongoCollection<Document> getCollection(String db, String collection)
