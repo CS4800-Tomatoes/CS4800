@@ -8,7 +8,5 @@ public class CourseRecommenderApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CourseRecommenderApplication.class, args);
-		System.out.println("Hello World");
 	}
-
 }
