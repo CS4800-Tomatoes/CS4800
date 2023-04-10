@@ -53,4 +53,4 @@ jobs:
         port: 22
         script: |
           killall java
-          nohup java -jar /home/ec2-user/course-recommender/target/course-recommender-0.0.1-SNAPSHOT.jar > log.txt &
+          nohup java -jar /home/ec2-user/course-recommender/target/course-recommender-0.0.1-SNAPSHOT.jar > log.txt 2> log2.txt &
