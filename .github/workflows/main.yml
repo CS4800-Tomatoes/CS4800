@@ -30,3 +30,12 @@ jobs:
     - name: Build with Maven
       working-directory: ./course-recommender
       run: mvn -B package --file pom.xml
+    - name: Copy file via ssh key
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ec2-52-43-136-213.us-west-2.compute.amazonaws.com
+        username: ec2-user
+        port: 22
+        key: ${{secrets.KEY}}
+        source: "./course-recommender/target/course-recommender-0.0.1-SNAPSHOT.jar"
+        target: "~/"
