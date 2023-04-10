@@ -9,10 +9,14 @@
 name: Java CI with Maven
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+
+env:
+  HOST: ec2-52-43-136-213.us-west-2.compute.amazonaws.com
+  USERNAME: ec2-user
+  PORT_NUMBER: 22
+  SSH_KEY: ${{secrets.KEY}}
 
 jobs:
   build:
@@ -33,9 +37,20 @@ jobs:
     - name: Copy file via ssh key
       uses: appleboy/scp-action@v0.1.4
       with:
-        host: ec2-52-43-136-213.us-west-2.compute.amazonaws.com
-        username: ec2-user
-        port: 22
-        key: ${{secrets.KEY}}
+        host: $HOST
+        username: $USERNAME
+        port: $PORT_NUMBER
+        key: $SSH_KEY
         source: "./course-recommender/target/course-recommender-0.0.1-SNAPSHOT.jar"
         target: "~/"
+    - name: multiple command
+      uses: appleboy/ssh-action@v0.1.9
+      with:
+        host: $HOST
+        username: $USERNAME
+        key: $SSH_KEY
+        port: $PORT_NUMBER
+        script: |
+          killall java
+          nohup java -DXms512m -DXmx1024m -jar /home/ec2-user/course-recommender/target/course-recommender-0.0.1-SNAPSHOT.jar > log.txt &
+          touch newJavaFile.txt
