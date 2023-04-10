@@ -27,9 +27,6 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
-    - name: Move to correct Dir
-      run: cd course-recommender
-    - name: Debugging
-      run: ls
     - name: Build with Maven
+      working-directory: ./course-recommender
       run: mvn -B package --file pom.xml
