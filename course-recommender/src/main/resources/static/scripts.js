@@ -5,6 +5,7 @@ $(document).ready(function()
     var search_bar = document.getElementById("search_bar");
     var search_button = document.getElementById("search_button");
     footer = document.getElementById("footer");
+    var about_button = document.getElementById("about_page");
 
     // for seraching up them classes 
     function search(courseNumber){
@@ -33,6 +34,9 @@ $(document).ready(function()
                 }
             });
         //render result   
+    }
+
+    function aboutPage(){
         
     }
 
