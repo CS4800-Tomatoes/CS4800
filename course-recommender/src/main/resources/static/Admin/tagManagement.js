@@ -1,10 +1,11 @@
 let key;
 
-const classTableCol1 = "Course Number";
-const classTableCol2 = "Class Name";
-const classTableCol3 = "Tag";
+const COURSE_NUMBER = "Course Number";
+const CLASS_NAME = "Class Name";
+const TAG = "Tag";
 
 let tagList;
+let classDataTable;
 
 $(document).ready(function()
 {
@@ -37,11 +38,36 @@ $(document).ready(function()
     // });
 
     //Initalizing the DataTable
-    let classDataTable = $("#myTable").DataTable({
+    classDataTable = $("#myTable").DataTable({
+        dom: '<"dataTableTop"fB>rt<"dataTableBottom"ip>',
+        buttons: [
+            {
+                text: "Add",
+                action: function(e, dt, node, config){
+                    //Create Modal which represents which classes are in a tag
+                    //and which classes aren't. Have the classes get moved over
+
+                    //Called a Dual Select Box or a Dual List Box
+                    //Bootstrap has UI for it
+                    //JQuery UI has a widget for it
+                    alert("test");
+                }
+            }
+        ],
         columns: [
-            {name: classTableCol1, title: classTableCol1},
-            {name: classTableCol2, title: classTableCol2},
-            {name: classTableCol3, title: classTableCol3}
+            {name: CLASS_NAME, title: CLASS_NAME,
+                render: function(data, type, row){
+                    return `CS${data[COURSE_NUMBER]} ${data[CLASS_NAME]}`;
+                }
+            },
+            {
+                render: function(data, type, row, meta){
+                    let editBtn = `<button id="editBtn${meta.row}" 
+                        class="btn btn-secondary"
+                        onclick="EditClassInDataTable(${meta.row})">Edit</button>`
+                    return editBtn;
+                }
+            }
         ]
     });
 
@@ -77,8 +103,6 @@ $(document).ready(function()
             getTagClassesInDataTable(classDataTable, tagId);
         }
     });
-
-    
 });
 
 //tableData: An Array of Class Objects
@@ -87,10 +111,8 @@ function drawClassDataTable(dataTable, tableData)
     dataTable.clear();
     for(let i = 0; i < tableData.length; i++)
     {
-        classNumber = tableData[i][classTableCol1];
-        className = tableData[i][classTableCol2];
-        classTag = tableData[i][classTableCol3];
-        dataTable.row.add([classNumber, className, classTag]);
+        //provide rowInfo to dataTable
+        dataTable.row.add([tableData[i], i]);
     }
     dataTable.draw();
 }
@@ -143,4 +165,19 @@ function createTagDropdown(data)
         option.innerText = data[i]["tagName"];
         dropdown.appendChild(option);
     }
+}
+
+function EditClassInDataTable(row)
+{
+    console.log(row);
+
+    //Get Data fro row=4 as an array. [0]=class pojo, [1] = row
+    //classDataTable.row(4).data()[0] == class pojo
+
+    //Probably will make a modal show up which shows all the tags it has on right
+    //Have arrows to move all leftover tags to left
+    
+
+    //I just realized I'm silly and I don't even need an edit btn.
+    //Just need an add button to add a class to a certain tag. oops.
 }

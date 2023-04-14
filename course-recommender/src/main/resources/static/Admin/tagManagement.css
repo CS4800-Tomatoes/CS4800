@@ -7,4 +7,12 @@ html, body {
 #main-content{
   flex-grow: 2;
 }
+
+.dataTables_wrapper .dataTables_filter{
+  float:left;
+}
+
+div.dt-buttons {
+  float: right;
+}
   
