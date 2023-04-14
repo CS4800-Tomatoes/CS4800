@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cpp.tomatoes.courserecommender.DTO.ClassJsonResult;
+import com.cpp.tomatoes.courserecommender.DTO.ClassSearchResult;
 import com.cpp.tomatoes.courserecommender.Models.Class;
 import com.cpp.tomatoes.courserecommender.Models.SuccessCode;
 import com.cpp.tomatoes.courserecommender.Models.Tag;
@@ -50,7 +50,7 @@ public class WebController {
     @GetMapping(path = "/mongoSearch")
     public String mongoSearch(@RequestParam String searchString)
     {
-        ClassJsonResult result = new ClassJsonResult();
+        ClassSearchResult result = new ClassSearchResult();
         //Make this return a json
         if(searchString == null)
         {

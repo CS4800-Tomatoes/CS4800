@@ -1,0 +1,10 @@
+html, body {
+    min-height: 100vh;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+#main-content{
+  flex-grow: 2;
+}
+  

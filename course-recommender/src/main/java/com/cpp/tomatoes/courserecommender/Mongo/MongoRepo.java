@@ -51,7 +51,6 @@ public class MongoRepo {
             result.add(jsonDoc);
         });
 
-        //Currently we just take the first tagId in tagIdList and return its results
         return result;
     }
 
@@ -114,5 +113,16 @@ public class MongoRepo {
             tags.add(tag);
         });
         return tags.toArray(new Tag[tags.size()]);
+    }
+
+    public Class[] getAllClasses()
+    {
+        MongoCollection<Document> classesCollection = _connection.getCollection(DATABASE, "classes");
+        ArrayList<Class> classes = new ArrayList<Class>();
+        classesCollection.find().forEach(doc -> {
+            Class class1 = new Gson().fromJson(doc.toJson(), Class.class);
+            classes.add(class1);
+        });
+        return classes.toArray(new Class[classes.size()]);
     }
 }

@@ -3,7 +3,12 @@ package com.cpp.tomatoes.courserecommender.DTO;
 import com.cpp.tomatoes.courserecommender.Models.Class;
 import com.google.gson.annotations.SerializedName;
 
-public class ClassJsonResult {
+public class ClassSearchResult {
+
+    public static final int EXCEPTION = 0;
+    public static final int SUCCESS = 1;
+    public static final int EMPTY = 2;
+
     @SerializedName("status")
     private int _status;
     @SerializedName("errorMessage")
