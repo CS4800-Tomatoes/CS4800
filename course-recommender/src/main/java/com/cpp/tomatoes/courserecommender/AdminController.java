@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +12,7 @@ import org.springframework.web.service.annotation.GetExchange;
 
 import com.cpp.tomatoes.courserecommender.Mongo.MongoRepo;
 import com.cpp.tomatoes.courserecommender.DTO.ClassSearchResult;
+import com.cpp.tomatoes.courserecommender.DTO.ClassTagUpdateResult;
 import com.cpp.tomatoes.courserecommender.Models.Class;
 import com.cpp.tomatoes.courserecommender.Models.Tag;
 import com.google.gson.Gson;
@@ -95,6 +97,23 @@ public class AdminController {
         {
             result.setStatus(ClassSearchResult.EXCEPTION);
             result.setErrorMessages(e.getMessage());
+        }
+        return _gson.toJson(result);
+    }
+
+    @PatchMapping("/Admin/AddTagToClass")
+    public String AddTagToClass(String classId, int tagId)
+    {
+        ClassTagUpdateResult result = new ClassTagUpdateResult();
+        try 
+        {
+            boolean updateResult = _repo.addTagToClass(classId, tagId);
+            if(updateResult == true)
+                result.setStatus(ClassTagUpdateResult.SUCCESS);
+            else
+                result.setStatus(ClassTagUpdateResult.EXCEPTION);
+        } catch (Exception e) {
+                result.setStatus(ClassTagUpdateResult.EXCEPTION);
         }
         return _gson.toJson(result);
     }

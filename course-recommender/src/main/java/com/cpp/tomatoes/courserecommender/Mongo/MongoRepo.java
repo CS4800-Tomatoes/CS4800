@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import com.cpp.tomatoes.courserecommender.Models.Class;
 import com.cpp.tomatoes.courserecommender.Models.Tag;
 import com.google.gson.Gson;
@@ -13,8 +14,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mongodb.BasicDBList;
+import com.mongodb.DBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 
 public class MongoRepo {
     private static String DATABASE = "Class_Recommender";
@@ -124,5 +129,18 @@ public class MongoRepo {
             classes.add(class1);
         });
         return classes.toArray(new Class[classes.size()]);
+    }
+
+    public boolean addTagToClass(String classId, int tagId)
+    {
+        MongoCollection<Document> classesCollection = _connection.getCollection(DATABASE, "classes");
+        
+        UpdateResult result = classesCollection.updateOne(eq("_id", new org.bson.types.ObjectId(classId)),
+            Updates.addToSet("Tag", tagId));
+
+        if(result.getUpsertedId() != null)
+            return true;
+        else
+            return false;
     }
 }

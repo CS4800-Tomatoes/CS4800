@@ -41,7 +41,7 @@ $(document).ready(function()
     //         console.error(error);
     //       });
     // });
-    $( "#dialog" ).dialog({
+    const updateClassTagDialogBox = $("#dialog").dialog({
         autoOpen: false,
         modal: true,
         width: window.innerWidth/2
@@ -90,7 +90,7 @@ $(document).ready(function()
                         }
 
                         //Actually opening the dialog
-                        $("#dialog").dialog("open");
+                        updateClassTagDialogBox.dialog("open");
                     }
                 }
             }
@@ -151,12 +151,26 @@ $(document).ready(function()
     let addTagToClassForm = $("#addTagToClassForm")[0];
     addTagToClassForm.addEventListener("submit", function(e){
         e.preventDefault();
-        const mongodbOID = $("#addTagToClassForm select")[0].value;
+        let mongodbOID = $("#addTagToClassForm select")[0].value;
         console.log(mongodbOID);
         console.log(currentTagId);
         //Maybe make it so that the select dropdown of Tag is automatic instead of by submit
 
-        //Currently missing ajax call to backend which would add the tag
+        $.ajax({
+            url: "/Admin/AddTagToClass",
+            type: "Patch",
+            data: {
+                classId: mongodbOID,
+                tagId: currentTagId
+            },
+            success: function(data){
+                getTagClassesInDataTable(classDataTable, currentTagId);
+                updateClassTagDialogBox.dialog("close");
+            },
+            error: function(request, error){
+                alert("Error retriving updating table data");
+            }
+        });
     });
 });
 
