@@ -41,7 +41,7 @@ $(document).ready(function()
     //         console.error(error);
     //       });
     // });
-    const updateClassTagDialogBox = $("#dialog").dialog({
+    const updateClassTagDialogBox = $("#updateOneClassByOneTagDialog").dialog({
         autoOpen: false,
         modal: true,
         width: window.innerWidth/2
@@ -54,17 +54,12 @@ $(document).ready(function()
             {
                 text: "Add Tag to Class",
                 action: function(e, dt, node, config){
-                    //Create Modal which represents which classes are in a tag
-                    //and which classes aren't. Have the classes get moved over
+                    //Creating a Dialog Box which will allow a user to add a tag to a class
 
-                    //Called a Dual Select Box or a Dual List Box
-                    //Bootstrap has UI for it
-                    //JQuery UI has a widget for it
-                    
                     if(currentTagId == -1)
                         alert('No tag to add');
                     else{
-                        //Displaying the Tag to Add's Name
+                        //Display the Tag to Add's Name
                         let tagObject = tagList.find((el)=>{
                             return el.tagId == currentTagId;
                         });
@@ -93,9 +88,21 @@ $(document).ready(function()
                         updateClassTagDialogBox.dialog("open");
                     }
                 }
+            },
+            {
+                text: "Delete Tag from Class",
+                className: "btn-delete-tag-from-class",
+                action: function(e, dt, node, config){
+                    console.log("hello, working on deletion");
+                }
             }
         ],
         columns: [
+            {
+                orderable: false,
+                className: 'select-checkbox',
+                targets:   0
+            }, 
             {name: CLASS_NAME, title: CLASS_NAME,
                 render: function(data, type, row){
                     return `CS${data[COURSE_NUMBER]} ${data[CLASS_NAME]}`;
@@ -109,7 +116,25 @@ $(document).ready(function()
                     return editBtn;
                 }
             }
-        ]
+        ],
+        select: {
+            style: 'os',
+            selector: 'td:first-child',
+            multi: true
+        },
+        order: [[ 1, 'asc' ]]
+    });
+
+    //Make sure you can only delete when you are clicked on one thing
+    classDataTable.button(".btn-delete-tag-from-class").disable();
+
+    classDataTable.on('select deselect', function (){
+        var selectedRows = classDataTable.rows({selected: true}).count();
+        if (selectedRows === 1) {
+            classDataTable.button(".btn-delete-tag-from-class").enable();
+        } else {
+            classDataTable.button(".btn-delete-tag-from-class").disable();
+        }
     });
 
     //Use ajax to get all the tags.
@@ -181,7 +206,7 @@ function drawClassDataTable(dataTable, tableData)
     for(let i = 0; i < tableData.length; i++)
     {
         //provide rowInfo to dataTable
-        dataTable.row.add([tableData[i], i]);
+        dataTable.row.add([null, tableData[i], i]);
     }
     dataTable.draw();
 }
