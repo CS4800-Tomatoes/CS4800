@@ -8,6 +8,9 @@
   
   <!-- Scripts :) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css">
+
   <link href="../styles.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" 
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
@@ -102,5 +105,22 @@
     </div>
   </footer>
   
+
+  <div id="dialog" title="Add Classes">
+    <!--Create Should have some html here to show where to add tag-->
+    <div>
+      <p>Add: <b id="tagToAdd"></b></p>
+    </div>
+    <form id="addTagToClassForm">
+      <div class="form-group">
+        <label for="addTagToClass">Class to Add Tag:</label>
+        <select name="addTagToClass" id="addTagToClassOptionList">
+        </select>
+      </div>
+      <input type="submit" class="btn btn-primary" value="Submit">
+    </form>
+    
+
+  </div>
  </body> 
 </html>

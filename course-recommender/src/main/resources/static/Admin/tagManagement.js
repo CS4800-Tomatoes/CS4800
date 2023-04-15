@@ -5,6 +5,11 @@ const CLASS_NAME = "Class Name";
 const TAG = "Tag";
 
 let tagList;
+let currentTagId = -1;
+
+let completeClassList;
+let currentClassList;
+
 let classDataTable;
 
 $(document).ready(function()
@@ -36,13 +41,18 @@ $(document).ready(function()
     //         console.error(error);
     //       });
     // });
+    $( "#dialog" ).dialog({
+        autoOpen: false,
+        modal: true,
+        width: window.innerWidth/2
+    });
 
     //Initalizing the DataTable
     classDataTable = $("#myTable").DataTable({
         dom: '<"dataTableTop"fB>rt<"dataTableBottom"ip>',
         buttons: [
             {
-                text: "Add",
+                text: "Add Tag to Class",
                 action: function(e, dt, node, config){
                     //Create Modal which represents which classes are in a tag
                     //and which classes aren't. Have the classes get moved over
@@ -50,7 +60,38 @@ $(document).ready(function()
                     //Called a Dual Select Box or a Dual List Box
                     //Bootstrap has UI for it
                     //JQuery UI has a widget for it
-                    alert("test");
+                    
+                    if(currentTagId == -1)
+                        alert('No tag to add');
+                    else{
+                        //Displaying the Tag to Add's Name
+                        let tagObject = tagList.find((el)=>{
+                            return el.tagId == currentTagId;
+                        });
+                        $("#tagToAdd")[0].innerText = tagObject.tagName;
+
+                        //Finding which classes don't have the current tags
+                        let classIdOfClassesWithTag = currentClassList.map(el=>el["_id"]["$oid"]);
+                        let classesWithoutTag = completeClassList.filter(
+                            el => {
+                                let id = el["_id"]["$oid"];
+                                return !classIdOfClassesWithTag.includes(id);
+                            }
+                        );
+
+                        //Fill in the addTagsToClassesDropdown
+                        let classesDropdown = document.getElementById("addTagToClassOptionList")
+                        for(let i = 0; i < classesWithoutTag.length; i++)
+                        {
+                            let option = document.createElement("option");
+                            option.setAttribute("value", classesWithoutTag[i]["_id"]["$oid"]);
+                            option.innerText = classesWithoutTag[i]["Class Name"];
+                            classesDropdown.appendChild(option);
+                        }
+
+                        //Actually opening the dialog
+                        $("#dialog").dialog("open");
+                    }
                 }
             }
         ],
@@ -87,7 +128,7 @@ $(document).ready(function()
     //Start with DataTable being full
     getAllClassesInDataTable(classDataTable);
 
-    //Hookup EventLister to Tag Form
+    //Hookup EventListener to Tag Form
     let tagForm = document.getElementById("tagForm");
     tagForm.addEventListener("submit", function(event){
         event.preventDefault();
@@ -96,12 +137,26 @@ $(document).ready(function()
         {
             //ajax all classes
             getAllClassesInDataTable(classDataTable);
+            currentTagId = -1;
         }
         else
         {
             //ajax the corresponding tag number
             getTagClassesInDataTable(classDataTable, tagId);
+            currentTagId = tagId;
         }
+    });
+
+    //Hookup EventListener to Add Tag to Class Form
+    let addTagToClassForm = $("#addTagToClassForm")[0];
+    addTagToClassForm.addEventListener("submit", function(e){
+        e.preventDefault();
+        const mongodbOID = $("#addTagToClassForm select")[0].value;
+        console.log(mongodbOID);
+        console.log(currentTagId);
+        //Maybe make it so that the select dropdown of Tag is automatic instead of by submit
+
+        //Currently missing ajax call to backend which would add the tag
     });
 });
 
@@ -118,17 +173,25 @@ function drawClassDataTable(dataTable, tableData)
 }
 
 function getAllClassesInDataTable(classDataTable){
-    $.ajax({
-        url: "/Admin/GetClasses",
-        type: "Get",
-        success: function(data){
-            let tableData = JSON.parse(data);
-            drawClassDataTable(classDataTable, tableData);
-        },
-        error: function(request, error){
-            alert("Error retriving table data");
-        }
-    });
+    if(completeClassList == undefined)
+    {
+        $.ajax({
+            url: "/Admin/GetClasses",
+            type: "Get",
+            success: function(data){
+                let tableData = JSON.parse(data);
+                completeClassList = tableData;
+                drawClassDataTable(classDataTable, tableData);
+            },
+            error: function(request, error){
+                alert("Error retriving table data");
+            }
+        });
+    }
+    else
+    {
+        drawClassDataTable(classDataTable, completeClassList);
+    }
 }
 
 function getTagClassesInDataTable(classDataTable, tagId)
@@ -142,6 +205,7 @@ function getTagClassesInDataTable(classDataTable, tagId)
             if(result["status"] == 1)
             {
                 let tableData = result["classData"];
+                currentClassList = tableData;
                 drawClassDataTable(classDataTable, tableData);
             }
             else
@@ -155,14 +219,14 @@ function getTagClassesInDataTable(classDataTable, tagId)
     });
 }
 
-function createTagDropdown(data)
+function createTagDropdown(tagList)
 {
     let dropdown = document.getElementById("tag")
-    for(let i = 0; i < data.length; i++)
+    for(let i = 0; i < tagList.length; i++)
     {
         let option = document.createElement("option");
-        option.setAttribute("value", data[i]["tagId"]);
-        option.innerText = data[i]["tagName"];
+        option.setAttribute("value", tagList[i]["tagId"]);
+        option.innerText = tagList[i]["tagName"];
         dropdown.appendChild(option);
     }
 }
