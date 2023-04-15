@@ -143,4 +143,17 @@ public class MongoRepo {
         else
             return false;
     }
+
+    public boolean removeTagFromClass(String classId, int tagId)
+    {
+        MongoCollection<Document> classesCollection = _connection.getCollection(DATABASE, "classes");
+        
+        UpdateResult result = classesCollection.updateOne(eq("_id", new org.bson.types.ObjectId(classId)),
+            Updates.pull("Tag", tagId));
+
+        if(result.getUpsertedId() != null)
+            return true;
+        else
+            return false;
+    }
 }

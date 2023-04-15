@@ -118,6 +118,23 @@ public class AdminController {
         return _gson.toJson(result);
     }
 
+    @PatchMapping("/Admin/RemoveTagFromClass")
+    public String RemoveTagFromClass(String classId, int tagId)
+    {
+        ClassTagUpdateResult result = new ClassTagUpdateResult();
+        try 
+        {
+            boolean updateResult = _repo.removeTagFromClass(classId, tagId);
+            if(updateResult == true)
+                result.setStatus(ClassTagUpdateResult.SUCCESS);
+            else
+                result.setStatus(ClassTagUpdateResult.EXCEPTION);
+        } catch (Exception e) {
+                result.setStatus(ClassTagUpdateResult.EXCEPTION);
+        }
+        return _gson.toJson(result);
+    }
+
     @GetMapping("/Admin/GetTags")
     public String GetAllTags()
     {

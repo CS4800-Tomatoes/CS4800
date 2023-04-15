@@ -93,7 +93,28 @@ $(document).ready(function()
                 text: "Delete Tag from Class",
                 className: "btn-delete-tag-from-class",
                 action: function(e, dt, node, config){
-                    console.log("hello, working on deletion");
+                    if(currentTagId == -1)
+                        alert('No tag to delete');
+                    else
+                    {
+                        let classToRemoveId = classDataTable.rows({selected:true}).data()[0][1]["_id"]["$oid"];
+                        let tagToRemoveID = currentTagId;
+
+                        $.ajax({
+                            url: "/Admin/RemoveTagFromClass",
+                            type: "Patch",
+                            data: {
+                                classId: classToRemoveId,
+                                tagId: tagToRemoveID
+                            },
+                            success: function(data){
+                                getTagClassesInDataTable(classDataTable, currentTagId);
+                            },
+                            error: function(request, error){
+                                alert("Error retriving updating table data");
+                            }
+                        });
+                    }
                 }
             }
         ],
@@ -126,9 +147,9 @@ $(document).ready(function()
     });
 
     //Make sure you can only delete when you are clicked on one thing
-    classDataTable.button(".btn-delete-tag-from-class").disable();
+    //classDataTable.button(".btn-delete-tag-from-class").disable();
 
-    classDataTable.on('select deselect', function (){
+    classDataTable.on('select deselect draw.dt', function (){
         var selectedRows = classDataTable.rows({selected: true}).count();
         if (selectedRows === 1) {
             classDataTable.button(".btn-delete-tag-from-class").enable();
