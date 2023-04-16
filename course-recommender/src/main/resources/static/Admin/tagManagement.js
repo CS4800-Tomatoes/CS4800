@@ -4,7 +4,7 @@ const COURSE_NUMBER = "Course Number";
 const CLASS_NAME = "Class Name";
 const TAG = "Tag";
 
-let tagList;
+let completeTagList;
 let currentTagId = -1;
 
 let completeClassList;
@@ -60,7 +60,7 @@ $(document).ready(function()
                         alert('No tag to add');
                     else{
                         //Display the Tag to Add's Name
-                        let tagObject = tagList.find((el)=>{
+                        let tagObject = completeTagList.find((el)=>{
                             return el.tagId == currentTagId;
                         });
                         $("#tagToAdd")[0].innerText = tagObject.tagName;
@@ -76,6 +76,9 @@ $(document).ready(function()
 
                         //Fill in the addTagsToClassesDropdown
                         let classesDropdown = document.getElementById("addTagToClassOptionList")
+                        
+                        $("#addTagToClassOptionList").empty();
+                        
                         for(let i = 0; i < classesWithoutTag.length; i++)
                         {
                             let option = document.createElement("option");
@@ -133,7 +136,7 @@ $(document).ready(function()
                 render: function(data, type, row, meta){
                     let editBtn = `<button id="editBtn${meta.row}" 
                         class="btn btn-secondary"
-                        onclick="EditClassInDataTable(${meta.row})">Edit</button>`
+                        onclick="editClassInDataTable(${meta.row})">Edit</button>`
                     return editBtn;
                 }
             }
@@ -163,8 +166,15 @@ $(document).ready(function()
         url: "/Admin/GetTags",
         type: "Get",
         success: function(data){
-            tagList = JSON.parse(data);
-            createTagDropdown(tagList);
+            completeTagList = JSON.parse(data);
+            let dropdown = document.getElementById("tag")
+            for(let i = 0; i < completeTagList.length; i++)
+            {
+                let option = document.createElement("option");
+                option.setAttribute("value", completeTagList[i]["tagId"]);
+                option.innerText = completeTagList[i]["tagName"];
+                dropdown.appendChild(option);
+            }
         },
         error: function(request, error){
             alert("Error retriving tag data");
@@ -279,29 +289,116 @@ function getTagClassesInDataTable(classDataTable, tagId)
     });
 }
 
-function createTagDropdown(tagList)
+function editClassInDataTable(dataTableRowIndex)
 {
-    let dropdown = document.getElementById("tag")
-    for(let i = 0; i < tagList.length; i++)
-    {
-        let option = document.createElement("option");
-        option.setAttribute("value", tagList[i]["tagId"]);
-        option.innerText = tagList[i]["tagName"];
-        dropdown.appendChild(option);
-    }
+    let classObj = classDataTable.row(dataTableRowIndex).data()[1];
+
+    let editDialogId = "editClassTags"
+    let editDialogHtml = createEditDialog(classObj, editDialogId);
+ 
+    $(editDialogHtml).dialog({
+        autoOpen: true,
+        modal: true,
+        width: window.innerWidth*3/4,
+        close: function cleanUpEditDialog(){
+            $(this).dialog('destroy').remove();
+        }
+    });
 }
 
-function EditClassInDataTable(row)
+function createEditDialog(classObject, id)
 {
-    console.log(row);
+    //classDataTable.row(4).data()[1] == class pojo
+    let dialogContainer = document.createElement("div");
+    dialogContainer.id = id;
+    dialogContainer.title = `${classObject["Class Name"]}'s Tags`;
 
-    //Get Data fro row=4 as an array. [0]=class pojo, [1] = row
-    //classDataTable.row(4).data()[0] == class pojo
+    let form = document.createElement("form");
+    let container = document.createElement("div");
+    container.classList.add("container");
+    let row = document.createElement("div");
+    row.classList.add("row");
 
-    //Probably will make a modal show up which shows all the tags it has on right
-    //Have arrows to move all leftover tags to left
-    
+    let createBtns = function(){
+        let btnContainer = document.createElement("div");
+        btnContainer.classList.add("col-2");
+        btnContainer.classList.add("d-flex");
+        btnContainer.classList.add("flex-column");
+        btnContainer.classList.add("justify-content-center");
 
-    //I just realized I'm silly and I don't even need an edit btn.
-    //Just need an add button to add a class to a certain tag. oops.
+        let btn = document.createElement("button");
+        btn.innerText = "Test";
+
+        let btn2 = document.createElement("button");
+        btn2.innerText = "Test2";
+
+        btnContainer.appendChild(btn);
+        btnContainer.appendChild(btn2);
+        return btnContainer;
+    }
+
+    let createFormGroup = function(optionTagIdList, labelText, selectId){
+        let formGroup = document.createElement("div");
+        formGroup.classList.add("form-group");
+        formGroup.classList.add("col-5");
+        formGroup.classList.add("d-flex");
+        formGroup.classList.add("flex-column");
+        
+        let label = document.createElement("label");
+        label.setAttribute("for", selectId);
+        label.innerText = labelText;
+
+        let select = document.createElement("select");
+        select.setAttribute("name", selectId);
+        select.setAttribute("id", selectId);
+        select.multiple = true;
+
+        //create options here
+        for(let i = 0; i < optionTagIdList.length; i++)
+        {
+            let option = document.createElement("option");
+            option.setAttribute("value", optionTagIdList[i]);
+            option.innerText = getTag(optionTagIdList[i])["tagName"];
+
+            select.append(option);
+        }
+
+        formGroup.append(label);
+        formGroup.append(select);
+        return formGroup;
+    };
+
+    //Create the tagIdList need to make things
+    let selectedClassTagIdList = classObject["Tag"];
+    let allOtherTagIds = new Array();
+    for(let i = 0; i < completeTagList.length; i++)
+    {
+        let el = completeTagList[i];
+        let tagId = el["tagId"];
+        if(!selectedClassTagIdList.includes(tagId))
+        {
+            allOtherTagIds.push(tagId);
+        }
+    }
+
+    let fg1 = createFormGroup(allOtherTagIds, "Unowned", "fg1");
+    let btnContainer = createBtns();
+    let fg2 = createFormGroup(selectedClassTagIdList, "Owned", "fg2");
+
+    row.appendChild(fg1);
+    row.appendChild(btnContainer);
+    row.appendChild(fg2);
+    container.appendChild(row);
+    form.appendChild(container);
+    dialogContainer.appendChild(form);
+
+    return dialogContainer;
+}
+
+function getTag(tagId)
+{
+    let tag = completeTagList.find(el => {
+        return el["tagId"] == tagId;
+    });
+    return tag;
 }
