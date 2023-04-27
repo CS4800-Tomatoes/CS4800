@@ -278,6 +278,12 @@ function getTagClassesInDataTable(classDataTable, tagId)
                 currentClassList = tableData;
                 drawClassDataTable(classDataTable, tableData);
             }
+            else if(result["status"] == 2)
+            {
+                let tableData = [];
+                currentClassList = tableData;
+                drawClassDataTable(classDataTable, tableData);
+            }
             else
             {
                 alert("Error retriving table data");
