@@ -30,8 +30,8 @@ public class WebController {
         _gson = new Gson();
     }
 
-    @GetMapping(path = "/welcome")
-    public String welcome()
+    @GetMapping(path = "/about")
+    public String aboutPage()
     {
         return "Hi Mady";
     }

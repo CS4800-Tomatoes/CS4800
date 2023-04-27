@@ -5,6 +5,7 @@ $(document).ready(function()
     var search_bar = document.getElementById("search_bar");
     var search_button = document.getElementById("search_button");
     footer = document.getElementById("footer");
+    var about_button = document.getElementById("about_page");
 
     // for seraching up them classes 
     function search(courseNumber){
@@ -33,6 +34,9 @@ $(document).ready(function()
                 }
             });
         //render result   
+    }
+
+    function aboutPage(){
         
     }
 
@@ -148,9 +152,11 @@ function mongodbDataToCards(pojo)
         var desc = results["Description"];
         var courseNum = results["Course Number"];
         var className = results["Class Name"];
+        var pic = results["Image"];
+        console.log(pic);
         
         //add to DOM tree
-        cards[count%3] = createCard(results, courseNum + ": " + className, desc);
+        cards[count%3] = createCard(results, courseNum + ": " + className, desc, pic);
         if(count%3 == 2 || count+1 == items){
             var row = document.createElement("div");
             row.setAttribute("class", "row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3")
@@ -172,7 +178,7 @@ function mongodbDataToCards(pojo)
     }
 }
 
-function createCard(results, courseTitle, courseDesc){
+function createCard(results, courseTitle, courseDesc, pic){
     //Create items
     //var column = document.createElement("div");
     //column.setAttribute("class", "col-4");
@@ -181,7 +187,8 @@ function createCard(results, courseTitle, courseDesc){
     //cardStyle.setAttribute("style", "width: 18rem");
     var img = document.createElement("img");
     img.setAttribute("class", "card-img-top");
-    img.setAttribute("src", "https://i.kym-cdn.com/editorials/icons/mobile/000/001/508/hackerman-icon.jpg");
+    img.setAttribute("src", pic);
+    img.setAttribute("style", "width: 350px; height: 210px;")
     var cardBody = document.createElement("div");
     cardBody.setAttribute("class", "card-body");
     var cardTitle = document.createElement("h6");
