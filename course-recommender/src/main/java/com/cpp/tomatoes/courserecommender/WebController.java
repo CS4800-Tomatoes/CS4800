@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cpp.tomatoes.courserecommender.DTO.ClassJsonResult;
+import com.cpp.tomatoes.courserecommender.DTO.ClubJsonResult;
 import com.cpp.tomatoes.courserecommender.Models.Class;
+import com.cpp.tomatoes.courserecommender.Models.Club;
 import com.cpp.tomatoes.courserecommender.Models.SuccessCode;
 import com.cpp.tomatoes.courserecommender.Models.Tag;
 import com.cpp.tomatoes.courserecommender.Mongo.MongoRepo;
@@ -90,6 +92,53 @@ public class WebController {
 
         result.setStatus(SuccessCode.SUCCESS);
         result.setClassList(classList.toArray(new Class[classList.size()]));
+
+        return _gson.toJson(result);
+    }
+
+    @GetMapping(path = "/mongoSearchForClub")
+    public String mongoClubSearch(@RequestParam String searchString)
+    {
+        ClubJsonResult result = new ClubJsonResult();
+        //Make this return a json
+        if(searchString == null)
+        {
+            result.setStatus(SuccessCode.EMPTY);
+            result.setErrorMessages("Missing Search String");
+            return _gson.toJson(result);
+        }
+        
+        int[] tagIdList = findTagIdsFromSearchString(searchString);
+
+        if(tagIdList.length == 0)
+        {
+            result.setStatus(SuccessCode.EMPTY);
+            result.setErrorMessages("No Results Found");
+            return _gson.toJson(result);
+        }
+
+        JsonArray jsonResult = _repo.findClubsByTagIds(tagIdList);
+        //If tags are valid, then there should be a result.
+        //Since we get no results even with tags existing, something is wrong
+        if(jsonResult.size() == 0)
+        {
+            result.setStatus(SuccessCode.EXCEPTION);
+            result.setErrorMessages("Something went wrong");
+            return _gson.toJson(result);
+        }
+        ArrayList<Club> clubList = new ArrayList<Club>();
+        for(JsonElement json: jsonResult)
+        {
+            try {
+                Club clubObj = _gson.fromJson(json, Club.class);
+                clubList.add(clubObj);
+            } catch (Exception e) {
+                return e.getMessage() + "|Padding|" + json.getAsString();
+            }
+        }
+
+        result.setStatus(SuccessCode.SUCCESS);
+        result.setClubList(clubList.toArray(new Club[clubList.size()]));
 
         return _gson.toJson(result);
     }
