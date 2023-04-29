@@ -19,7 +19,8 @@ public class MongoConnection {
     {
         if(_client == null)
         {
-            String url = "mongodb+srv://msarmiento1621:XK3624rsFYymvhY2@cluster0.qnobfqx.mongodb.net/?retryWrites=true&w=majority";
+            String password = System.getenv("Maddy Db Pass");
+            String url = "mongodb+srv://msarmiento1621:"+ password + "@cluster0.qnobfqx.mongodb.net/?retryWrites=true&w=majority";
             ConnectionString connectionString = new ConnectionString(url);
             MongoClientSettings settings = MongoClientSettings.builder()
             .applyConnectionString(connectionString)

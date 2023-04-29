@@ -7,39 +7,6 @@ $(document).ready(function()
     footer = document.getElementById("footer");
     var about_button = document.getElementById("about_page");
 
-    // for seraching up them classes 
-    function search(courseNumber){
-        $("#result_list").empty();
-        //get input
-        var course = $('#course_input').val()
-        //send HTTP request
-        $.ajax({
-                url: "/mongoSearch",
-                type: "get",
-                data: {
-                    courseNum: courseNumber
-                },
-                success: function (res){
-                    alert("The result from this server is: " + res);
-                    //Step 1: create a list of the courses that match the tags of the searched words
-                    
-                    //Step 2: Populate into cards
-
-                    //Step 3: Add a cute tomato at the bottom of the card to show matches/top recommendations
-                    
-                },
-                error: function(error){
-                    alert("There was an issue :(")
-                    console.log("Failed miserably." + error);
-                }
-            });
-        //render result   
-    }
-
-    function aboutPage(){
-        
-    }
-
     function searchByString(searchString){
         $("#result_list").empty();
         //get input
@@ -69,11 +36,12 @@ $(document).ready(function()
                         //     </div>
                         //   </div>
                         mongodbDataToCards(jason);
+                        var searchBar = document.getElementById("search_bar");
+                        searchBar.value = "";
                     }
                     else{
                         alert("That is not a valid tag. Hint: Try \"AI\" or \"Programming\"");
                     }
-                    
                 },
                 error: function(error){
                     alert("There was an issue :(")
@@ -81,7 +49,6 @@ $(document).ready(function()
                 }
             });
         //render result   
-        
     }
 
     document.getElementById("search_button").addEventListener("click", () => {
@@ -92,7 +59,7 @@ $(document).ready(function()
         }
         else{
             searchByString(searchBar.value);
-            searchBar.value = "";
+            // searchBar.value = "";
         }
     });
 
@@ -106,7 +73,7 @@ $(document).ready(function()
             }
             else{
                 searchByString(searchBar.value);
-                searchBar.value = "";
+                // searchBar.value = "";
             }
         }
     })
@@ -136,14 +103,7 @@ function mongodbDataToCards(pojo)
 
     items = jason["classData"].length;
 
-    var toe = document.getElementById("toe");
-    if(items > 0)
-    {
-        toe.removeAttribute("class","fixed-bottom");
-    }
-    else{
-        toe.setAttribute("class", "fixed-bottom");
-    }
+    
     var cards = [0, 0, 0];
     var count = 0;
 
@@ -175,6 +135,18 @@ function mongodbDataToCards(pojo)
             cardContainer.appendChild(row);
         }
         count++;
+    }
+
+    //Make sure the new document is showing up
+    var toe = document.getElementById("toe");
+    //determine if footer should be fixed or not
+    var heightComparision = window.innerHeight - document.body.offsetHeight <= toe.offsetHeight;
+    if(items > 0 && heightComparision)
+    {
+        toe.removeAttribute("class", "fixed-bottom");
+    }
+    else{
+        toe.setAttribute("class", "fixed-bottom");
     }
 }
 
