@@ -53,4 +53,5 @@ jobs:
         port: 22
         script: |
           killall java
+          export Maddy_Db_Pass=${{secrets.DBKEY}}
           nohup java -jar /home/ec2-user/course-recommender/target/course-recommender-0.0.1-SNAPSHOT.jar > log.txt 2> log2.txt &
