@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import com.cpp.tomatoes.courserecommender.Models.Class;
+import com.cpp.tomatoes.courserecommender.Models.Club;
 import com.cpp.tomatoes.courserecommender.Models.Tag;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -71,6 +72,51 @@ public class MongoRepo {
                     if(!list.contains(courseNum))
                     {
                         list.add(courseNum);
+                        jsonArray.add(el);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            return new JsonArray();
+        }
+        
+        return jsonArray;
+    }
+
+
+    public JsonArray findClubsByTagId(int tagId)
+    {
+        //If recieve multiple tags return json that separates them both
+        MongoCollection<Document> clubsCollection = _connection.getCollection(DATABASE, "club");
+        
+        JsonArray result = new JsonArray();
+        Bson filter = Filters.in("tag", tagId);
+        var documents = clubsCollection.find(filter);
+        //.projection(Projections.exclude("_id"));
+        documents.forEach(doc -> {
+            JsonObject jsonDoc = JsonParser.parseString(doc.toJson()).getAsJsonObject();
+            result.add(jsonDoc);
+        });
+
+        return result;
+    }
+
+    public JsonArray findClubsByTagIds(int[] tagIds)
+    {
+        Gson _gson = new Gson();
+        JsonArray jsonArray = new JsonArray();
+        ArrayList<String> list = new ArrayList<String>();
+        try {
+            for(int tagId : tagIds)
+            {
+                JsonArray clubs = findClubsByTagId(tagId);
+                for(JsonElement el: clubs)
+                {
+                    Club clubObj = _gson.fromJson(el, Club.class);
+                    String clubIdString = clubObj.get_id().get$oid();
+                    if(!list.contains(clubIdString))
+                    {
+                        list.add(clubIdString);
                         jsonArray.add(el);
                     }
                 }

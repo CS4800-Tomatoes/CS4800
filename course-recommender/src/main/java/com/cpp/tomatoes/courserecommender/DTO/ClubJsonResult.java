@@ -1,22 +1,21 @@
 package com.cpp.tomatoes.courserecommender.DTO;
 
-import com.cpp.tomatoes.courserecommender.Models.Class;
+import com.cpp.tomatoes.courserecommender.Models.Club;
 import com.google.gson.annotations.SerializedName;
 
-public class ClassJsonResult {
-    //0 means exception, 1 means has content, 2 means no content/no string given
+public class ClubJsonResult {
     @SerializedName("status")
     private int _status;
     @SerializedName("errorMessage")
     private String _errorMessage;
-    @SerializedName("classData")
-    private Class[] _classList;
+    @SerializedName("clubData")
+    private Club[] _clubList;
 
     public void setStatus(int status){_status = status;}
     public void setErrorMessages(String msg){_errorMessage = msg;}
-    public void setClassList(Class[] classList){_classList = classList;}
+    public void setClubList(Club[] clubList){_clubList = clubList;}
 
     public int getStatus(){return _status;}
     public String getErrorMessage(){return _errorMessage;}
-    public Class[] getClassList(){return _classList.clone();}
+    public Club[] getClubList(){return _clubList.clone();}
 }

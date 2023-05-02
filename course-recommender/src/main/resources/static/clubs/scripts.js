@@ -13,7 +13,7 @@ $(document).ready(function()
         var course = $('#course_input').val()
         //send HTTP request
         $.ajax({
-                url: "/mongoSearch",
+                url: "/mongoSearchForClub",
                 type: "get",
                 data: {
                     searchString: searchString
@@ -36,12 +36,11 @@ $(document).ready(function()
                         //     </div>
                         //   </div>
                         mongodbDataToCards(jason);
-                        var searchBar = document.getElementById("search_bar");
-                        searchBar.value = "";
                     }
                     else{
                         alert("That is not a valid tag. Hint: Try \"AI\" or \"Programming\"");
                     }
+                    
                 },
                 error: function(error){
                     alert("There was an issue :(")
@@ -49,6 +48,7 @@ $(document).ready(function()
                 }
             });
         //render result   
+        
     }
 
     document.getElementById("search_button").addEventListener("click", () => {
@@ -59,7 +59,7 @@ $(document).ready(function()
         }
         else{
             searchByString(searchBar.value);
-            // searchBar.value = "";
+            searchBar.value = "";
         }
     });
 
@@ -73,7 +73,7 @@ $(document).ready(function()
             }
             else{
                 searchByString(searchBar.value);
-                // searchBar.value = "";
+                searchBar.value = "";
             }
         }
     })
@@ -101,22 +101,29 @@ function mongodbDataToCards(pojo)
     cardContainer = document.getElementById("cardContainer");
     cardContainer.innerHTML = "";
 
-    items = jason["classData"].length;
+    items = jason["clubData"].length;
 
-    
+    var toe = document.getElementById("toe");
+    if(items > 0)
+    {
+        toe.removeAttribute("class","fixed-bottom");
+    }
+    else{
+        toe.setAttribute("class", "fixed-bottom");
+    }
     var cards = [0, 0, 0];
     var count = 0;
 
     for(let step = 0; step < items; step++){
-        var results = jason["classData"][step];
-        var desc = results["Description"];
-        var courseNum = results["Course Number"];
-        var className = results["Class Name"];
-        var pic = results["Image"];
+        var results = jason["clubData"][step];
+        var desc = results["description"];
+        var websiteUrl = results["website"];
+        var clubName = results["name"];
+        var pic = results["image"];
         console.log(pic);
         
         //add to DOM tree
-        cards[count%3] = createCard(results, courseNum + ": " + className, desc, pic);
+        cards[count%3] = createClubCard(results, clubName, desc, websiteUrl, pic);
         if(count%3 == 2 || count+1 == items){
             var row = document.createElement("div");
             row.setAttribute("class", "row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3")
@@ -136,31 +143,27 @@ function mongodbDataToCards(pojo)
         }
         count++;
     }
-
-    //Make sure the new document is showing up
-    var toe = document.getElementById("toe");
-    //determine if footer should be fixed or not
-    var heightComparision = window.innerHeight - document.body.offsetHeight <= toe.offsetHeight;
-    if(items > 0 && heightComparision)
-    {
-        toe.removeAttribute("class", "fixed-bottom");
-    }
-    else{
-        toe.setAttribute("class", "fixed-bottom");
-    }
 }
 
-function createCard(results, courseTitle, courseDesc, pic){
+function createClubCard(results, clubName, clubDesc, websiteUrl, pic){
     //Create items
     //var column = document.createElement("div");
     //column.setAttribute("class", "col-4");
     var cardStyle = document.createElement("div");
     cardStyle.setAttribute("class", "card col-4");
     //cardStyle.setAttribute("style", "width: 18rem");
+
+
+    var imgContainer = document.createElement("div")
+    imgContainer.classList.add("card-img-top");
+    imgContainer.setAttribute("style", "flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center");
+
     var img = document.createElement("img");
-    img.setAttribute("class", "card-img-top");
+    img.setAttribute("class", "img-fluid");
     img.setAttribute("src", pic);
-    img.setAttribute("style", "width: 350px; height: 210px;")
+    //img.setAttribute("style", "width: 350px; height: 210px;")
+
+
     var cardBody = document.createElement("div");
     cardBody.setAttribute("class", "card-body");
     var cardTitle = document.createElement("h6");
@@ -168,14 +171,22 @@ function createCard(results, courseTitle, courseDesc, pic){
     // descContainer.setAttribute("class", "overflow-auto");
     // descContainer.appendChild(description);
     var description = document.createElement("p");
-    cardTitle.innerText = courseTitle;
-    description.innerText = courseDesc;
+    cardTitle.innerText = clubName;
+    description.innerText = clubDesc;
+
+    var websiteLinkElem = document.createElement("a");
+    websiteLinkElem.href = websiteUrl;
+    websiteLinkElem.target = "_blank";
+    websiteLinkElem.classList.add("card-link");
+    websiteLinkElem.innerText = `${clubName} website`;
 
     //append to parents
     cardBody.appendChild(cardTitle);
     // cardBody.appendChild(descContainer);
     cardBody.appendChild(description);
-    cardStyle.appendChild(img);
+    cardBody.appendChild(websiteLinkElem);
+    imgContainer.appendChild(img);
+    cardStyle.appendChild(imgContainer);
     cardStyle.appendChild(cardBody);
     //column.appendChild(cardStyle);
 
