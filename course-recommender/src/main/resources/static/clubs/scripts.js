@@ -143,6 +143,18 @@ function mongodbDataToCards(pojo)
         }
         count++;
     }
+
+    //Make sure the new document is showing up
+    var toe = document.getElementById("toe");
+    //determine if footer should be fixed or not
+    var heightComparision = window.innerHeight - document.body.offsetHeight <= toe.offsetHeight;
+    if(items > 0 && heightComparision)
+    {
+        toe.removeAttribute("class", "fixed-bottom");
+    }
+    else{
+        toe.setAttribute("class", "fixed-bottom");
+    }
 }
 
 function createClubCard(results, clubName, clubDesc, websiteUrl, pic){
